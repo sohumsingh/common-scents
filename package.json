@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "db:seed:build": "node --experimental-strip-types --no-warnings scripts/build-seed.mts"
   },
   "dependencies": {
     "next": "16.4.6",
