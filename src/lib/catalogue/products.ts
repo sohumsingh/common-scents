@@ -1,4 +1,4 @@
-import type { Product } from "../types";
+import type { SeedProduct } from "../types";
 
 /**
  * ---------------------------------------------------------------------------
@@ -22,10 +22,11 @@ import type { Product } from "../types";
  *    `notesStatus` marks them as awaiting confirmation against supplier
  *    documentation.
  *
- * To add, edit or remove a fragrance, change this array only. Every page,
- * filter and collection is derived from it.
+ * SEED SOURCE ONLY. The storefront reads the catalogue from Supabase
+ * (see db.ts). This file feeds `npm run db:seed:build`, which regenerates
+ * supabase/seed.sql; once the admin dashboard exists, edit products there.
  */
-export const products: Product[] = [
+export const products: SeedProduct[] = [
   {
     id: "dior-sauvage-edp",
     slug: "dior-sauvage-eau-de-parfum",

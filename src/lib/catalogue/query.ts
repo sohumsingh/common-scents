@@ -1,4 +1,4 @@
-import { priceBuckets } from "./service";
+import { priceBuckets } from "./price-buckets";
 import { buildSearchText, matchesSearchText } from "./search";
 import { lowestPrice } from "../format";
 import type { CatalogueFilters, Gender, OccasionSlug, Product, SortKey } from "../types";

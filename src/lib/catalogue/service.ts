@@ -1,9 +1,11 @@
-import { brands, brandBySlug } from "./brands";
+import "server-only";
 import { occasionBySlug, occasions } from "./occasions";
-import { products } from "./products";
+import { loadCatalogue } from "./db";
 import type {
   Brand,
   CartLine,
+  CharacterKey,
+  IntensityKey,
   Occasion,
   OccasionSlug,
   Product,
@@ -12,49 +14,30 @@ import type {
 } from "../types";
 import { lowestPrice } from "../format";
 import { buildSearchText } from "./search";
-import { getFinderProfile, type CharacterKey, type IntensityKey } from "./finder-profile";
 
 /**
  * ---------------------------------------------------------------------------
  * CATALOGUE SERVICE
  * ---------------------------------------------------------------------------
  *
- * The single access point for catalogue data. Components and pages never
- * import the raw `products` array directly — they go through this module.
+ * The single access point for catalogue data. Pages and server components go
+ * through this module; none of them talk to the database directly.
  *
- * The functions are `async` on purpose. The seed catalogue is local, but the
- * moment PostgreSQL is connected (via Prisma or Drizzle) the bodies below
- * become database queries and no calling code has to change.
- *
- * Example of the future swap:
- *
- *   export async function listProducts(): Promise<Product[]> {
- *     const rows = await db.product.findMany({ include: { notes: true } });
- *     return rows.map(toProduct);
- *   }
+ * Products and brands come from Supabase (see db.ts), loaded once per cache
+ * window and shared by every function below. The five occasions are part of
+ * the site's structure (their slugs are routes and types), so they live in
+ * code (occasions.ts); the database holds a matching copy.
  */
 
-export type PriceBucket = {
-  id: string;
-  label: string;
-  min: number;
-  max: number;
-};
-
-/** Fixed price bands used by the price filter. */
-export const priceBuckets: PriceBucket[] = [
-  { id: "under-500", label: "Under R500", min: 0, max: 499 },
-  { id: "500-999", label: "R500 – R999", min: 500, max: 999 },
-  { id: "1000-1499", label: "R1 000 – R1 499", min: 1000, max: 1499 },
-  { id: "1500-1999", label: "R1 500 – R1 999", min: 1500, max: 1999 },
-  { id: "2000-plus", label: "R2 000 and above", min: 2000, max: Number.POSITIVE_INFINITY },
-];
+export { priceBuckets, type PriceBucket } from "./price-buckets";
 
 export async function listProducts(): Promise<Product[]> {
+  const { products } = await loadCatalogue();
   return [...products];
 }
 
 export async function getProductBySlug(slug: string): Promise<Product | undefined> {
+  const { products } = await loadCatalogue();
   return products.find((product) => product.slug === slug);
 }
 
@@ -67,11 +50,13 @@ export async function getOccasion(slug: string): Promise<Occasion | undefined> {
 }
 
 export async function listBrands(): Promise<Brand[]> {
+  const { brands } = await loadCatalogue();
   return [...brands];
 }
 
 export async function getBrand(slug: string): Promise<Brand | undefined> {
-  return brandBySlug.get(slug);
+  const { brands } = await loadCatalogue();
+  return brands.find((brand) => brand.slug === slug);
 }
 
 /** Attach the resolved occasion objects to a product. */
@@ -85,15 +70,18 @@ export function withOccasions(product: Product): ProductWithOccasions {
 }
 
 export async function listProductsWithOccasions(): Promise<ProductWithOccasions[]> {
+  const { products } = await loadCatalogue();
   return products.map(withOccasions);
 }
 
 export async function getProductsByOccasion(slug: OccasionSlug): Promise<Product[]> {
+  const { products } = await loadCatalogue();
   return products.filter((product) => product.occasions.includes(slug));
 }
 
 /** The "Featured Fragrances" selection on the homepage. */
 export async function getFeaturedProducts(limit = 8): Promise<Product[]> {
+  const { products } = await loadCatalogue();
   const badged = products.filter((product) => product.editorialBadge);
   const rest = products
     .filter((product) => !product.editorialBadge)
@@ -102,21 +90,15 @@ export async function getFeaturedProducts(limit = 8): Promise<Product[]> {
 }
 
 /**
- * "Trending Now" is a *curated* selection. Real popularity data arrives
- * with the commerce backend; until then this is explicitly editorial.
+ * "Trending Now" is a *curated* selection, ordered by each product's
+ * trending rank. Real popularity data arrives with orders; until then this
+ * is explicitly editorial.
  */
 export async function getCuratedTrending(limit = 4): Promise<Product[]> {
-  const curated = [
-    "lattafa-khamrah-edp",
-    "afnan-9pm-edp",
-    "ysl-black-opium-edp",
-    "armaf-cdnim-edt",
-    "dior-sauvage-edp",
-    "versace-eros-edp",
-  ];
-  return curated
-    .map((id) => products.find((product) => product.id === id))
-    .filter((product): product is Product => Boolean(product))
+  const { products } = await loadCatalogue();
+  return products
+    .filter((product) => product.trendingRank !== undefined)
+    .sort((a, b) => (a.trendingRank ?? 0) - (b.trendingRank ?? 0))
     .slice(0, limit);
 }
 
@@ -130,6 +112,7 @@ export async function getOccasionAlternatives(
   product: Product,
   limit = 4,
 ): Promise<{ occasion: Occasion; products: Product[] }[]> {
+  const { products } = await loadCatalogue();
   const price = lowestPrice(product.variants);
 
   return product.occasions
@@ -148,14 +131,16 @@ export async function getOccasionAlternatives(
     .filter((group): group is { occasion: Occasion; products: Product[] } => group !== null);
 }
 
-/** Brands that actually appear in the catalogue, ordered by name. */
+/** Brands that actually appear in the catalogue, in display order. */
 export async function listCatalogueBrands(): Promise<Brand[]> {
+  const { products, brands } = await loadCatalogue();
   const used = new Set(products.map((product) => product.brandSlug));
   return brands.filter((brand) => used.has(brand.slug));
 }
 
 /** The overall price range of the catalogue, used for filter scale hints. */
 export async function getCataloguePriceRange(): Promise<{ min: number; max: number }> {
+  const { products } = await loadCatalogue();
   const prices = products.flatMap((product) => product.variants.map((variant) => variant.priceZAR));
   return { min: Math.min(...prices), max: Math.max(...prices) };
 }
@@ -169,6 +154,7 @@ export async function getCataloguePriceRange(): Promise<{ min: number; max: numb
 export type CartCatalogue = Record<string, Omit<CartLine, "key" | "quantity">>;
 
 export async function getCartCatalogue(): Promise<CartCatalogue> {
+  const { products } = await loadCatalogue();
   const entries: CartCatalogue = {};
   for (const product of products) {
     for (const variant of product.variants) {
@@ -190,22 +176,9 @@ export async function getCartCatalogue(): Promise<CartCatalogue> {
   return entries;
 }
 
-/**
- * "New In" is worked out from the dates products were added, never typed in
- * by hand, so it always points at the genuinely newest fragrances.
- */
-const NEW_ARRIVAL_COUNT = 3;
-const newArrivalIds = new Set(
-  [...products]
-    .sort((a, b) => new Date(b.addedAt).getTime() - new Date(a.addedAt).getTime())
-    .slice(0, NEW_ARRIVAL_COUNT)
-    .map((product) => product.id),
-);
-
-/** The label shown on a product: an editorial pick first, then "New In". */
+/** The label shown on a product: an editorial pick first, then "New In" (set when the catalogue loads). */
 export function getProductBadge(product: Product): string | undefined {
-  if (product.editorialBadge) return product.editorialBadge;
-  return newArrivalIds.has(product.id) ? "New In" : undefined;
+  return product.badge;
 }
 
 /** Re-exported for server code; browser components import from ./variants. */
@@ -232,6 +205,7 @@ export type SearchIndexEntry = {
 };
 
 export async function getSearchIndex(): Promise<SearchIndexEntry[]> {
+  const { products } = await loadCatalogue();
   return products.map((product) => ({
     variants: product.variants.map(({ size, priceZAR }) => ({ size, priceZAR })),
     searchText: buildSearchText(product),
@@ -272,13 +246,15 @@ export type FinderEntry = {
 };
 
 export async function getFinderCatalogue(): Promise<FinderEntry[]> {
+  const { products } = await loadCatalogue();
   return products.map((product) => ({
     slug: product.slug,
     brand: product.brand,
     name: product.name,
     fullName: product.fullName,
     occasions: product.occasions,
-    ...getFinderProfile(product.id),
+    characters: product.finder.characters,
+    intensity: product.finder.intensity,
     shortDescription: product.shortDescription,
     priceZAR: product.priceZAR,
     variants: product.variants.map(({ size, priceZAR }) => ({ size, priceZAR })),

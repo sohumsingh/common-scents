@@ -10,10 +10,9 @@
  * changes; every product must have an entry.
  */
 
-export type CharacterKey = "fresh" | "woody" | "sweet" | "bold" | "floral";
-export type IntensityKey = "light" | "balanced" | "rich";
+import type { CharacterKey, FinderProfile, IntensityKey } from "../types";
 
-export type FinderProfile = { characters: CharacterKey[]; intensity: IntensityKey };
+export type { CharacterKey, FinderProfile, IntensityKey };
 
 const profile = (characters: CharacterKey[], intensity: IntensityKey): FinderProfile => ({
   characters,
@@ -48,8 +47,3 @@ export const finderProfiles: Record<string, FinderProfile> = {
   "al-haramain-amber-oud-gold-edp": profile(["sweet", "bold"], "rich"),
 };
 
-export function getFinderProfile(productId: string): FinderProfile {
-  const found = finderProfiles[productId];
-  if (!found) throw new Error(`No finder profile for "${productId}" — add one in finder-profile.ts.`);
-  return found;
-}

@@ -111,6 +111,33 @@ export type Product = {
   visual: ProductVisual;
   /** Real product photography. When present it replaces the generated artwork. */
   image?: ProductImage;
+  /** How the signature finder matches this fragrance (editorial). */
+  finder: FinderProfile;
+  /** When and how long it wears (normalised community votes). */
+  wear?: WearGuide;
+  /** Position in "Trending Now" (1 = first); absent when not trending. */
+  trendingRank?: number;
+  /** The label shown on cards: the editorial badge, else "New In" for the newest. */
+  badge?: string;
+};
+
+/**
+ * A product as written in the seed files (src/lib/catalogue/products.ts).
+ * The finder profile, wear guide, trending rank and badge are stored as
+ * separate seed tables and joined on when the catalogue is loaded.
+ */
+export type SeedProduct = Omit<Product, "finder" | "wear" | "trendingRank" | "badge">;
+
+/** The finder's character answers a fragrance satisfies, and how strongly it comes across. */
+export type CharacterKey = "fresh" | "woody" | "sweet" | "bold" | "floral";
+export type IntensityKey = "light" | "balanced" | "rich";
+export type FinderProfile = { characters: CharacterKey[]; intensity: IntensityKey };
+
+/** Season suitability and day share are 0–100; longevity is typical hours on skin. */
+export type WearGuide = {
+  seasons: { winter: number; spring: number; summer: number; autumn: number };
+  day: number;
+  longevityHours: number;
 };
 
 /**

@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import { Bottle } from "./Bottle";
 import { LogoMark } from "@/components/brand/Logo";
 import { noteFamily } from "@/lib/catalogue/note-families";
-import type { WearGuide } from "@/lib/catalogue/wear";
+import type { WearGuide } from "@/lib/types";
 import type { Product } from "@/lib/types";
 import { genderLabels } from "@/lib/format";
 

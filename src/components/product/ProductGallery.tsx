@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Bottle } from "./Bottle";
 import { FragranceProfile } from "./FragranceProfile";
-import type { WearGuide } from "@/lib/catalogue/wear";
+import type { WearGuide } from "@/lib/types";
 import type { Product } from "@/lib/types";
 
 type ViewId = "bottle" | "detail" | "profile";

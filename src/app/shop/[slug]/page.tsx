@@ -5,7 +5,6 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Container } from "@/components/ui/Container";
 import { ProductGallery } from "@/components/product/ProductGallery";
-import { getWearGuide } from "@/lib/catalogue/wear";
 import { ProductPurchasePanel } from "@/components/product/ProductPurchasePanel";
 import { ProductCard } from "@/components/catalogue/ProductCard";
 import { BackToResults } from "@/components/catalogue/ResultsTrail";
@@ -166,7 +165,7 @@ async function ProductPageContent({ params }: { params: PageProps<"/shop/[slug]"
 
           {/* The gallery fills the screen beside the details and stays put while they scroll. */}
           <div className="lg:col-start-1 lg:row-span-2 lg:row-start-1">
-            <ProductGallery product={product} wear={getWearGuide(product.id)} />
+            <ProductGallery product={product} wear={product.wear} />
           </div>
 
           <SelectedVariantProvider defaultVariantId={getDefaultVariant(product).id}>

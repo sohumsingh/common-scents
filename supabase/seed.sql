@@ -10,23 +10,23 @@ insert into public.occasions (slug, name, short_name, tagline, description, ques
   ('office-wear', 'Office Wear', 'Office', 'Refined, clean and unobtrusive fragrances for professional settings.', 'Considered, professional scents that read as well-mannered rather than loud. Office Wear fragrances are polished and reliable — the kind you can wear through a full day of meetings without anyone noticing anything but the fact that you smell put together.', 'What fragrance works for the office?', '#6B7280', '#E3E5E8', 5)
 on conflict (slug) do update set name = excluded.name, short_name = excluded.short_name, tagline = excluded.tagline, description = excluded.description, question = excluded.question, accent = excluded.accent, wash = excluded.wash, sort_order = excluded.sort_order;
 
-insert into public.brands (slug, name, family) values
-  ('dior', 'Dior', 'designer'),
-  ('ysl', 'Yves Saint Laurent', 'designer'),
-  ('giorgio-armani', 'Giorgio Armani', 'designer'),
-  ('versace', 'Versace', 'designer'),
-  ('paco-rabanne', 'Paco Rabanne', 'designer'),
-  ('dolce-gabbana', 'Dolce & Gabbana', 'designer'),
-  ('lancome', 'Lancôme', 'designer'),
-  ('montblanc', 'Montblanc', 'designer'),
-  ('lattafa', 'Lattafa', 'middle-eastern'),
-  ('afnan', 'Afnan', 'middle-eastern'),
-  ('armaf', 'Armaf', 'middle-eastern'),
-  ('rasasi', 'Rasasi', 'middle-eastern'),
-  ('maison-alhambra', 'Maison Alhambra', 'middle-eastern'),
-  ('al-haramain', 'Al Haramain', 'middle-eastern'),
-  ('swiss-arabian', 'Swiss Arabian', 'middle-eastern')
-on conflict (slug) do update set name = excluded.name, family = excluded.family;
+insert into public.brands (slug, name, family, sort_order) values
+  ('dior', 'Dior', 'designer', 0),
+  ('ysl', 'Yves Saint Laurent', 'designer', 1),
+  ('giorgio-armani', 'Giorgio Armani', 'designer', 2),
+  ('versace', 'Versace', 'designer', 3),
+  ('paco-rabanne', 'Paco Rabanne', 'designer', 4),
+  ('dolce-gabbana', 'Dolce & Gabbana', 'designer', 5),
+  ('lancome', 'Lancôme', 'designer', 6),
+  ('montblanc', 'Montblanc', 'designer', 7),
+  ('lattafa', 'Lattafa', 'middle-eastern', 8),
+  ('afnan', 'Afnan', 'middle-eastern', 9),
+  ('armaf', 'Armaf', 'middle-eastern', 10),
+  ('rasasi', 'Rasasi', 'middle-eastern', 11),
+  ('maison-alhambra', 'Maison Alhambra', 'middle-eastern', 12),
+  ('al-haramain', 'Al Haramain', 'middle-eastern', 13),
+  ('swiss-arabian', 'Swiss Arabian', 'middle-eastern', 14)
+on conflict (slug) do update set name = excluded.name, family = excluded.family, sort_order = excluded.sort_order;
 
 insert into public.products (id, slug, brand_slug, name, full_name, concentration, gender, price_zar, compare_at_price_zar, short_description, description, character, notes_top, notes_heart, notes_base, notes_status, pricing_status, stock_status, added_at, editorial_badge, visual_accent, visual_glass, visual_wash, visual_shape, visual_cap, image_src, image_alt, finder_characters, finder_intensity, wear_winter, wear_spring, wear_summer, wear_autumn, wear_day, wear_longevity_hours, is_published, sort_order, trending_rank) values
   ('dior-sauvage-edp', 'dior-sauvage-eau-de-parfum', 'dior', 'Sauvage', 'Sauvage Eau de Parfum', 'Eau de Parfum', 'men', 1899, null, 'A crisp, modern aromatic built on bergamot and Sichuan pepper, warmed by ambroxan.', 'Sauvage is the reference point for what a contemporary masculine aromatic should be. It opens on a bright, juicy bergamot, warms through Sichuan pepper, lavender, star anise and nutmeg, and settles on ambroxan softened with a touch of vanilla. The result is polished and endlessly wearable — the sort of fragrance you can put on in the morning and still feel considered at night, which is why it sits in both Daily Wear and Office Wear.', array['Aromatic', 'Fresh', 'Confident']::text[], array['Bergamot']::text[], array['Sichuan Pepper', 'Lavender', 'Star Anise', 'Nutmeg']::text[], array['Ambroxan', 'Vanilla']::text[], 'pending-verification', 'indicative', 'pending-verification', '2026-10-28', 'Signature Pick', '#5F7E99', '#8FA9BF', '#E2E8EC', 'flacon', 'square', '/images/products/dior-sauvage-eau-de-parfum.webp', 'Dior Sauvage Eau de Parfum bottle', array['fresh', 'bold']::public.finder_character[], 'balanced', 93, 99, 83, 100, 49, 8, true, 0, 5),

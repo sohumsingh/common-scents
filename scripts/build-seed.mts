@@ -58,10 +58,10 @@ out.push(
 out.push(
   rows(
     "brands",
-    ["slug", "name", "family"],
-    brands.map((b) => [text(b.slug), text(b.name), text(b.family)]),
+    ["slug", "name", "family", "sort_order"],
+    brands.map((b, index) => [text(b.slug), text(b.name), text(b.family), num(index)]),
     "slug",
-    ["name", "family"],
+    ["name", "family", "sort_order"],
   ),
 );
 

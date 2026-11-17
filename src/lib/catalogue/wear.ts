@@ -17,11 +17,9 @@
  * occasionally, or replace with supplier guidance or customer reviews later.
  */
 
-export type WearGuide = {
-  seasons: { winter: number; spring: number; summer: number; autumn: number };
-  day: number;
-  longevityHours: number;
-};
+import type { WearGuide } from "../types";
+
+export type { WearGuide };
 
 const guide = (
   winter: number,
@@ -60,6 +58,3 @@ export const wearGuides: Record<string, WearGuide> = {
   "al-haramain-amber-oud-gold-edp": guide(79, 100, 91, 91, 52, 10),
 };
 
-export function getWearGuide(productId: string): WearGuide | undefined {
-  return wearGuides[productId];
-}
