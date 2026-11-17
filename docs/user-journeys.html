@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Common Scents journeys</title>
+<style>
+:root{--bg:#faf9f5;--surface:#f1efe8;--text:#2c2c2a;--muted:#73726c;--border:#d3d1c7;--acc-bg:#e6f1fb;--acc:#0c447c;--acc-b:#378add;--warn-bg:#faeeda;--warn:#633806;--warn-b:#ba7517}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1f1e1d;--surface:#2c2c2a;--text:#f1efe8;--muted:#b4b2a9;--border:#444441;--acc-bg:#0c447c;--acc:#e6f1fb;--acc-b:#85b7eb;--warn-bg:#633806;--warn:#faeeda;--warn-b:#ef9f27}}
+:root[data-theme="dark"]{--bg:#1f1e1d;--surface:#2c2c2a;--text:#f1efe8;--muted:#b4b2a9;--border:#444441;--acc-bg:#0c447c;--acc:#e6f1fb;--acc-b:#85b7eb;--warn-bg:#633806;--warn:#faeeda;--warn-b:#ef9f27}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.6 system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:980px;margin:0 auto;padding:32px 16px}
+h1{font-size:22px;font-weight:500;margin:0 0 4px}
+.sub{color:var(--muted);font-size:14px;margin:0 0 20px}
+.pill{font:inherit;font-size:13px;padding:6px 12px;border-radius:999px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer}
+.pill.on{background:var(--acc-bg);color:var(--acc);border-color:var(--acc-b)}
+.flow{display:flex;flex-wrap:wrap;align-items:stretch;gap:6px;margin-top:16px}
+.step{flex:0 1 160px;min-width:130px;border-radius:8px;padding:10px 12px;cursor:pointer;border:1px solid var(--border);background:var(--surface)}
+.step.sel{outline:2px solid var(--acc-b)}
+.step .n{font-size:13px;font-weight:500}
+.step .r{font-family:ui-monospace,Consolas,monospace;font-size:11px;color:var(--muted);margin-top:4px;word-break:break-all}
+.step.stub{background:var(--warn-bg);border-color:var(--warn-b)}.step.stub .n{color:var(--warn)}
+.step.entry{background:var(--acc-bg);border-color:var(--acc-b)}.step.entry .n{color:var(--acc)}
+.arrow{align-self:center;color:var(--muted)}
+.legend{display:flex;flex-wrap:wrap;gap:16px;margin-top:12px;font-size:12px;color:var(--muted)}
+.sw{display:inline-block;width:10px;height:10px;border-radius:2px;vertical-align:-1px;margin-right:4px}
+#detail{margin-top:16px;padding:12px 14px;border-radius:12px;background:var(--surface)}
+#alts{margin-top:10px;font-size:13px;color:var(--muted)}
+</style></head><body><main>
+<h1>Common Scents user journeys</h1>
+<p class="sub">Pick a journey, then click a step for its route and behaviour. Updated 15 November 2026, after the redesign.</p>
+<div id="pills" style="display:flex;flex-wrap:wrap;gap:6px"></div>
+<div class="legend"><span><span class="sw" style="background:var(--acc-bg);border:1px solid var(--acc-b)"></span>Entry point</span><span><span class="sw" style="background:var(--surface);border:1px solid var(--border)"></span>Working step</span><span><span class="sw" style="background:var(--warn-bg);border:1px solid var(--warn-b)"></span>Stub / not connected</span></div>
+<div id="flow" class="flow"></div>
+<div id="detail"></div>
+<div id="alts"></div>
+</main>
+<script>
+const J=[
+{k:"Browse and buy",alts:"Also reachable from the hero stage, Featured, Trending and the About teaser. The bottle glides from the card into the product page (view transition).",s:[
+["entry","Home","/","Centred signature header; hero with three arched bottles, Shop Now, occasion links and a brand ticker."],
+["","Shop all","/shop","Catalogue grid of photo cards with a staggered reveal."],
+["","Filter and sort","/shop?occasion=…&sort=…","Occasion, brand, gender and price filters (a fragrance matches a price band if any size does); sort by featured, newest or the 'From' price. State lives in the URL."],
+["","Product page","/shop/[slug]","Photo gallery (Bottle, Detail, Profile & notes), sticky on desktop; brand link, occasion tags and 'Back to results'."],
+["","Pick size and qty","ProductPurchasePanel","Size buttons show each size's price; the headline price follows the chosen size. Quantity stepper."],
+["","Add to bag","AddToCartButton","Desktop opens the bag drawer; phones show a small 'Added to your bag' confirmation instead."],
+["","Bag","CartDrawer","Photo thumbnails, quantities, remove, subtotal. A saved bag is re-checked against live prices."],
+["stub","Proceed to checkout","features.checkout = false","Button is disabled: no payment provider is configured. Journey ends here today."]]},
+{k:"Shop by occasion",alts:"Entry points: header Occasions menu, hero links, occasion tiles (#occasions), About page, 404 page, product occasion tags, the empty bag.",s:[
+["entry","Occasions menu","SiteHeader / OccasionsMenu","Daily wear, Date night, Special occasion, Gym and active, Office wear."],
+["","Collection page","/collections/[slug]","Arch stage of three bottles in the occasion's colour, then the occasion-scoped catalogue."],
+["","Refine","?brand=…&price=…","Filters apply within the collection."],
+["","Product page","/shop/[slug]","'Back to <occasion>' returns to this collection."],
+["","Compare by occasion","OccasionCompare","Other fragrances for the same occasion, closest in price first."],
+["stub","Checkout","disabled","Dead end until payments are connected."]]},
+{k:"Product profile",alts:"Wear guide figures come from Fragrantica community votes (normalised); notes await supplier confirmation.",s:[
+["entry","Product page","/shop/[slug]","Gallery thumbnails: Bottle, Detail, Profile & notes."],
+["","Profile & notes","FragranceProfile","Photo, notes by tier with a colour per family (citrus, floral, woody…)."],
+["","When to wear","wear guide","Longevity in hours, day/night split and four season bars."],
+["","Choose size","ProductPurchasePanel","Continue into the buy flow."]]},
+{k:"Signature finder",alts:"Rules-based, not AI (features.aiDiscovery is false). Matches use each fragrance's editorial profile; budget is a hard limit.",s:[
+["entry","Home finder","SignatureFinder","Section on the home page."],
+["","Moment, character, intensity, budget","finder state","Four optional questions; results update live."],
+["","Matches","finder-profile.ts","Fragrances matching every answer come first, marked 'Matches your answers'."],
+["","Close matches","fallback","Only if fewer than three exact matches; each says what it misses."],
+["","Product page","/shop/[slug]","Continues into the buy flow."]]},
+{k:"Search",alts:"The overlay and /search share one rule: every word must match the name, house, character, description, notes or occasion.",s:[
+["entry","Search icon","HeaderTools","Opens the search overlay."],
+["","Type query","SearchOverlay","Live results with bottle thumbnails, top 6."],
+["","Pick a result","/shop/[slug]","Jumps straight to the product."],
+["","Or see all","/search?q=…","Full results page."],
+["","Product page","/shop/[slug]","'Back to search results' returns here."]]},
+{k:"Brand drill-down",alts:"",s:[
+["entry","Product page","/shop/[slug]","Brand shown as a badge and in the breadcrumb."],
+["","Brand link","/shop?brand=…","Shop all pre-filtered to that brand."],
+["","Another product","/shop/[slug]","Compare within the brand."]]},
+{k:"Manage bag",alts:"The bag survives reloads via localStorage and is re-priced from the catalogue on load.",s:[
+["entry","Bag icon","CartButton","Header button with item count."],
+["","Bag drawer","CartDrawer","Items with photos and subtotal; focus returns to the bag button on close."],
+["","Edit items","setQuantity / removeItem","Plus, minus and remove."],
+["","Empty bag","clearCart","Clears all items."],
+["","Start with an occasion","/collections/[slug]","The empty bag lists the five occasions, plus 'browse all'."]]},
+{k:"Contact us",alts:"Also a mailto link and social channels. Contact details are placeholders.",s:[
+["entry","Contact page","/contact","Header, footer and About."],
+["","Fill form","ContactForm","Client-side validation."],
+["","Submit","POST /api/contact","Server validates and returns a reference like CS-XXXX."],
+["stub","Acknowledged","contactDelivery = false","Confirmation shown, but the message isn't delivered anywhere yet."]]},
+{k:"Newsletter",alts:"",s:[
+["entry","Newsletter card","NewsletterSection","Near the bottom of the home page."],
+["","Enter email","form onSubmit","Validates email; inline error if invalid."],
+["stub","Subscribed","newsletter = false","Shows a done state; no email provider connected."]]},
+{k:"Learn the brand",alts:"",s:[
+["entry","About link","/about","Header and footer."],
+["","About page","/about","Story, photo arches, four principles, the five collections."],
+["","Next step","/shop, /contact, /collections/[slug]","CTAs into shop, contact or an occasion."]]},
+{k:"Policies",alts:"",s:[
+["entry","Footer links","SiteFooter","Customer care column in the dark footer."],
+["","Info page","/info/delivery | returns | privacy | terms","Shared InfoPage layout; drafts pending business decisions."]]},
+{k:"Mobile navigation",alts:"Below the desktop breakpoint the signature sits left with search, bag and menu on the right.",s:[
+["entry","Menu button","MobileNav","Opens a side sheet."],
+["","Nav sheet","nav.primary","Home, Shop all, five occasions, About, Contact — links rise in one after another."],
+["","Destination","any primary route","Sheet closes on navigate; focus returns to the menu button on close."]]},
+{k:"Recovery",alts:"Unknown product and collection addresses are caught by src/proxy.ts and return a real 404.",s:[
+["entry","Bad URL or crash","not-found.tsx / error.tsx","404 page (status 404) or error boundary."],
+["","Recovery links","/shop, /, /collections/[slug]","404 offers shop, home and occasions; error offers retry and shop."]]}
+];
+let cur=0,sel=0;
+const $=id=>document.getElementById(id);
+function draw(){
+ $('pills').innerHTML='';
+ J.forEach((j,i)=>{const b=document.createElement('button');b.className='pill'+(i===cur?' on':'');b.textContent=j.k;b.onclick=()=>{cur=i;sel=0;draw()};$('pills').appendChild(b)});
+ $('flow').innerHTML='';
+ J[cur].s.forEach((st,i)=>{
+  if(i){const a=document.createElement('span');a.className='arrow';a.textContent='→';$('flow').appendChild(a)}
+  const d=document.createElement('div');d.className='step '+st[0]+(i===sel?' sel':'');d.tabIndex=0;d.setAttribute('role','button');
+  d.innerHTML='<div class="n"></div><div class="r"></div>';d.querySelector('.n').textContent=st[1];d.querySelector('.r').textContent=st[2];
+  d.onclick=()=>{sel=i;draw()};d.onkeydown=e=>{if(e.key==='Enter'){sel=i;draw()}};$('flow').appendChild(d)});
+ const st=J[cur].s[sel];
+ $('detail').innerHTML='<div style="font-weight:500;margin-bottom:4px"></div><div></div>';
+ $('detail').children[0].textContent='Step '+(sel+1)+' of '+J[cur].s.length+' · '+st[1];
+ $('detail').children[1].textContent=st[3];
+ $('alts').textContent=J[cur].alts;
+}
+draw();
+</script></body></html>

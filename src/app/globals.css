@@ -1,0 +1,728 @@
+@import "tailwindcss";
+
+/* ==========================================================================
+   COMMON SCENTS — Design System
+   Palette and typography are taken directly from the project brief:
+   Warm Ivory #F4F0E8 · Charcoal #292725 · Muted Beige #D8CBB8
+   Champagne Gold #B8A17B
+   ========================================================================== */
+
+@theme inline {
+  /* Type */
+  --font-sans: var(--font-jost), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-cormorant), ui-serif, Georgia, serif;
+
+  /* Surfaces */
+  --color-ivory: #f4f0e8;
+  --color-paper: #fbf9f4;
+  --color-parchment: #ece5d7;
+  --color-shell: #e3dbc9;
+
+  /* Ink */
+  --color-charcoal: #292725;
+  --color-ink: #3f3b36;
+  --color-stone: #6f6862;
+  --color-muted: #8d857c;
+
+  /* Accents */
+  --color-beige: #d8cbb8;
+  --color-sand: #c7b69f;
+  --color-gold: #b8a17b;
+  --color-gold-deep: #8e7749;
+
+  /* Lines */
+  --color-line: #e4dccd;
+  --color-line-strong: #d2c6b0;
+
+  /* Deep tones for the darker, more editorial sections */
+  --color-noir: #1f1d1b;
+  --color-noir-soft: #2c2926;
+
+  /* Motion */
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-soft: cubic-bezier(0.55, 0, 0.75, 0.2);
+
+  /* Breakpoint for the inline occasion nav */
+  --breakpoint-nav: 80rem;
+}
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    border-color: var(--color-line);
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-ivory);
+    color: var(--color-charcoal);
+    font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+    font-weight: 300;
+    font-synthesis-weight: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display), ui-serif, Georgia, serif;
+    font-weight: 300;
+    letter-spacing: -0.015em;
+  }
+
+  ::selection {
+    background-color: var(--color-charcoal);
+    color: var(--color-ivory);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-gold-deep);
+    outline-offset: 3px;
+  }
+
+  /* Inputs should not inherit the ultra-light body weight */
+  input,
+  textarea,
+  select,
+  button {
+    font: inherit;
+    color: inherit;
+  }
+
+  input[type="search"]::-webkit-search-cancel-button {
+    -webkit-appearance: none;
+  }
+}
+
+/* ==========================================================================
+   Utilities
+   ========================================================================== */
+
+/* Small tracked label used above section headings */
+@utility eyebrow {
+  font-family: var(--font-sans), sans-serif;
+  font-size: 0.6875rem;
+  font-weight: 400;
+  line-height: 1.2;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--color-gold-deep);
+}
+
+/* Hairline rule used between editorial blocks */
+@utility hairline {
+  height: 1px;
+  width: 100%;
+  background-color: var(--color-line);
+}
+
+/* ==========================================================================
+   Motion system
+   Timings follow one scale: quick feedback (180ms), standard (420ms) and
+   slow, editorial reveals (800ms). Entrances decelerate, exits are quicker.
+   Everything below is skipped when the visitor asks for reduced motion.
+   ========================================================================== */
+
+:root {
+  /*
+   * Live heights of the sticky header and the announcement bar above it.
+   * HeaderShell measures both in the browser and keeps these up to date;
+   * the values here are only first-paint fallbacks.
+   */
+  --header-h: 5.3rem;
+  --topbar-h: 2.3rem;
+  --dur-fast: 180ms;
+  --dur-base: 420ms;
+  --dur-slow: 820ms;
+  --stagger: 75ms;
+}
+
+/*
+ * Scroll reveals. Add `data-reveal` to any element (and optionally
+ * `style={{ "--i": n }}` to stagger siblings). `RevealObserver` marks it
+ * `data-revealed` as it scrolls into view. Content is only hidden once the
+ * script has confirmed it can reveal it (`html.motion-ok`), so nothing is
+ * ever stuck invisible without JavaScript.
+ */
+[data-reveal] {
+  transition:
+    opacity var(--dur-slow) var(--ease-out-soft),
+    transform var(--dur-slow) var(--ease-out-soft),
+    clip-path var(--dur-slow) var(--ease-out-soft);
+  transition-delay: calc(var(--i, 0) * var(--stagger));
+}
+
+html.motion-ok [data-reveal]:not([data-revealed]) {
+  opacity: 0;
+  transform: translateY(26px);
+}
+
+html.motion-ok [data-reveal="fade"]:not([data-revealed]) {
+  transform: none;
+}
+
+html.motion-ok [data-reveal="rise-sm"]:not([data-revealed]) {
+  transform: translateY(12px);
+}
+
+html.motion-ok [data-reveal="curtain"]:not([data-revealed]) {
+  opacity: 1;
+  transform: none;
+  clip-path: inset(0 0 100% 0);
+}
+
+/* The signature: written in from left to right, as if by hand. */
+@utility signature-reveal {
+  @media (prefers-reduced-motion: no-preference) {
+    animation: cs-sign 1.9s var(--ease-out-soft) 0.15s both;
+  }
+}
+
+@keyframes cs-sign {
+  from {
+    clip-path: inset(-10% 100% -10% 0);
+    opacity: 0.35;
+  }
+  to {
+    clip-path: inset(-10% -2% -10% 0);
+    opacity: 1;
+  }
+}
+
+/* Slow, weightless drift for hero bottles. */
+@utility float-slow {
+  @media (prefers-reduced-motion: no-preference) {
+    animation: cs-float 7s ease-in-out infinite;
+  }
+}
+
+@keyframes cs-float {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -12px, 0);
+  }
+}
+
+/* Gentle entrance for above-the-fold content on page load. */
+@utility rise-in {
+  @media (prefers-reduced-motion: no-preference) {
+    animation: cs-rise 1s var(--ease-out-soft) both;
+    animation-delay: calc(var(--i, 0) * 110ms + 120ms);
+  }
+}
+
+@keyframes cs-rise {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/*
+ * A home section that is at least one screen tall below the sticky header, on
+ * every device, with its content centred. Children that should soak up the
+ * spare room use `flex-1`; when content needs more than a screen (a phone,
+ * a short window) the section simply grows.
+ */
+@utility fit-viewport {
+  min-height: calc(100svh - var(--header-h));
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* A thin, on-brand scrollbar for panels that scroll inside the page. */
+@utility scrollbar-quiet {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-line-strong) transparent;
+}
+
+/*
+ * Infinite, slow ticker (brand names). Pauses on hover. It keeps moving for
+ * reduced-motion visitors too, but at a much gentler pace.
+ */
+@utility marquee-track {
+  animation: cs-marquee 60s linear infinite;
+  &:hover {
+    animation-play-state: paused;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    animation-duration: 150s;
+  }
+}
+
+@keyframes cs-marquee {
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+/* A soft light sweep across primary buttons on hover. */
+@utility sheen {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(110deg, transparent 30%, rgba(244, 240, 232, 0.16) 50%, transparent 70%);
+    transform: translateX(-120%);
+    pointer-events: none;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    &:hover::after {
+      transform: translateX(120%);
+      transition: transform 900ms var(--ease-out-soft);
+    }
+  }
+}
+
+/* Animated underline for text links. */
+@utility link-underline {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-size: 0% 1px;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  transition: background-size var(--dur-base) var(--ease-out-soft);
+  &:hover,
+  &:focus-visible {
+    background-size: 100% 1px;
+  }
+}
+
+/* Page-to-page crossfade and the bottle morph (React <ViewTransition>). */
+::view-transition-old(.page) {
+  animation: cs-page-out 200ms var(--ease-in-soft) both;
+}
+
+::view-transition-new(.page) {
+  animation: cs-page-in 520ms var(--ease-out-soft) 120ms both;
+}
+
+::view-transition-group(.bottle-morph) {
+  animation-duration: 560ms;
+  animation-timing-function: var(--ease-out-soft);
+}
+
+@keyframes cs-page-out {
+  to {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes cs-page-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}
+
+/* Slide a small confirmation up from the bottom edge (skipped for reduced motion) */
+@utility notice-in {
+  @media (prefers-reduced-motion: no-preference) {
+    animation: cs-notice-in 400ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+}
+
+@keyframes cs-notice-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Horizontal scrollers without a visible scrollbar */
+@utility no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Vertical writing for editorial side-labels */
+@utility vertical-label {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+}
+
+/* ---------------------------------------------------------------------------
+ * Home page: scroll-linked life
+ * ---------------------------------------------------------------------------
+ * Browser-native scroll-driven animations (no JavaScript). Browsers without
+ * support simply show the page as it was. Movement is skipped for
+ * reduced-motion visitors; the background colour shift is not movement, so it
+ * stays. Effects are scoped to `.home-scroll`, the home page wrapper.
+ *
+ * Note: `view()` timelines attach to the nearest scroll container, and
+ * `overflow: hidden` creates one. Use `overflow-clip` around elements that
+ * use `scroll-lift` or `scroll-draw`.
+ */
+
+/* A fixed wash behind the page whose colour drifts as you scroll. */
+.home-wash {
+  background-color: var(--color-ivory);
+  background-image: radial-gradient(55% 45% at 50% 50%, rgba(214, 186, 160, 0.32), transparent 70%);
+  background-size: 170% 170%;
+  background-repeat: no-repeat;
+  background-position: 90% 0%;
+}
+
+@supports (animation-timeline: scroll()) {
+  .home-wash {
+    animation: cs-home-wash linear both;
+    animation-timeline: scroll(root);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    /* Layers that drift at their own pace through the first screen. */
+    .home-scroll .scroll-drift {
+      animation: cs-drift linear both;
+      animation-timeline: scroll(root);
+      animation-range: 0 100vh;
+    }
+
+    /* The brand ribbon gets a push as you scroll, then carries on at its pace. */
+    .home-scroll .scroll-nudge {
+      animation: cs-nudge linear both;
+      animation-timeline: view();
+      animation-range: entry 0% exit 100%;
+    }
+
+    /* The hero copy eases back as you scroll past it. */
+    .home-scroll .scroll-fade {
+      animation: cs-scroll-fade linear both;
+      animation-timeline: scroll(root);
+      animation-range: 0 75vh;
+    }
+
+    /* Cards rise into place, each by its own amount (--lift). */
+    .home-scroll .scroll-lift {
+      animation: cs-lift linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 40%;
+    }
+
+    /* Thin gold rules draw in as their heading arrives. */
+    .home-scroll .scroll-draw {
+      animation: cs-draw linear both;
+      animation-timeline: view();
+      animation-range: entry 20% cover 35%;
+    }
+  }
+}
+
+@keyframes cs-home-wash {
+  0% {
+    background-color: #f4f0e8;
+    background-position: 90% 0%;
+  }
+  28% {
+    background-color: #f4e8e0;
+    background-position: 15% 35%;
+  }
+  50% {
+    background-color: #f2ead8;
+    background-position: 85% 60%;
+  }
+  72% {
+    background-color: #ebe8e1;
+    background-position: 25% 90%;
+  }
+  100% {
+    background-color: #f4f0e8;
+    background-position: 50% 100%;
+  }
+}
+
+@keyframes cs-drift {
+  to {
+    translate: 0 var(--drift, -60px);
+  }
+}
+
+@keyframes cs-nudge {
+  to {
+    translate: -260px 0;
+  }
+}
+
+@keyframes cs-scroll-fade {
+  to {
+    opacity: 0.25;
+    translate: 0 -48px;
+  }
+}
+
+@keyframes cs-lift {
+  from {
+    translate: 0 var(--lift, 48px);
+  }
+}
+
+@keyframes cs-draw {
+  from {
+    scale: 0 1;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * Home hero: the cinematic scroll story
+ * ---------------------------------------------------------------------------
+ * `.cine-track` is a tall block whose height sets how long the story lasts.
+ * `.cine-stage` stays pinned under the header for that whole stretch, and
+ * every `.cine-scene` plays its own slice of the scroll (`--cine-range`, set
+ * per scene in Hero.tsx) on the track's view timeline.
+ *
+ * Without scroll-driven animations, or for reduced-motion visitors, the
+ * track is an ordinary block and only the opening scene shows.
+ */
+
+.cine-opening {
+  min-height: calc(100svh - var(--header-h) - var(--topbar-h));
+}
+
+.cine-scene:not([data-pos="first"]),
+.cine-rail {
+  display: none;
+}
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .cine-track {
+      /* How much scrolling each scene change takes: generous on large screens, shorter on phones. */
+      --cine-step: 55svh;
+      height: calc(100svh - var(--header-h) + var(--cine-steps) * var(--cine-step));
+      view-timeline: --cine block;
+      view-timeline-inset: var(--header-h) 0px;
+    }
+
+    @media (min-width: 64rem) {
+      .cine-track {
+        --cine-step: 75svh;
+      }
+    }
+
+    .cine-stage {
+      position: sticky;
+      top: var(--header-h);
+      height: calc(100svh - var(--header-h));
+      overflow: hidden;
+    }
+
+    .cine-scene,
+    .cine-scene:not([data-pos="first"]) {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      animation: cine-mid linear both;
+      animation-timeline: --cine;
+      animation-range: var(--cine-range);
+    }
+
+    .cine-scene[data-pos="first"] {
+      animation-name: cine-first;
+    }
+
+    .cine-scene[data-pos="last"] {
+      animation-name: cine-last;
+    }
+
+    .cine-opening {
+      min-height: 0;
+      height: 100%;
+    }
+
+    /* Copy and bottle move at different speeds, for depth. */
+    .cine-copy,
+    .cine-bottle {
+      animation: cine-copy linear both;
+      animation-timeline: --cine;
+      animation-range: var(--cine-range);
+    }
+
+    .cine-bottle {
+      animation-name: cine-bottle;
+    }
+
+    [data-pos="last"] .cine-copy {
+      animation-name: cine-copy-last;
+    }
+
+    [data-pos="last"] .cine-bottle {
+      animation-name: cine-bottle-last;
+    }
+
+    .cine-rail {
+      display: flex;
+    }
+
+    .cine-mark {
+      opacity: 0.35;
+      animation: cine-mark linear both;
+      animation-timeline: --cine;
+      animation-range: var(--cine-range);
+    }
+
+    /* Rail marks brighten on hover and keyboard focus (important beats the scroll animation). */
+    .cine-mark:is(:hover, :focus-within) {
+      opacity: 1 !important;
+    }
+
+    /* On smaller screens the opening drops its occasion links (the story walks through them next). */
+    @media (max-width: 63.99rem) {
+      .cine-compact-hide {
+        display: none;
+      }
+    }
+  }
+}
+
+@keyframes cine-first {
+  0%,
+  60% {
+    opacity: 1;
+    visibility: visible;
+    translate: 0 0;
+  }
+  100% {
+    opacity: 0;
+    visibility: hidden;
+    translate: 0 -6svh;
+  }
+}
+
+@keyframes cine-mid {
+  0% {
+    opacity: 0;
+    visibility: hidden;
+  }
+  22%,
+  78% {
+    opacity: 1;
+    visibility: visible;
+  }
+  100% {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+@keyframes cine-last {
+  0% {
+    opacity: 0;
+    visibility: hidden;
+  }
+  35%,
+  100% {
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
+/* The copy fades within the middle of its scene, so two titles never overlap. */
+@keyframes cine-copy {
+  0%,
+  12% {
+    opacity: 0;
+    translate: 0 8svh;
+  }
+  38%,
+  62% {
+    opacity: 1;
+    translate: 0 0;
+  }
+  88%,
+  100% {
+    opacity: 0;
+    translate: 0 -8svh;
+  }
+}
+
+@keyframes cine-copy-last {
+  0%,
+  12% {
+    opacity: 0;
+    translate: 0 8svh;
+  }
+  40%,
+  100% {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+@keyframes cine-bottle {
+  0% {
+    translate: 0 14svh;
+    scale: 0.8;
+    filter: blur(6px);
+  }
+  30%,
+  70% {
+    translate: 0 0;
+    scale: 1;
+    filter: blur(0);
+  }
+  100% {
+    translate: 0 -12svh;
+    scale: 1.1;
+    filter: blur(5px);
+  }
+}
+
+@keyframes cine-bottle-last {
+  0% {
+    translate: 0 14svh;
+    scale: 0.8;
+    filter: blur(6px);
+  }
+  35%,
+  100% {
+    translate: 0 0;
+    scale: 1;
+    filter: blur(0);
+  }
+}
+
+@keyframes cine-mark {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  30%,
+  70% {
+    opacity: 1;
+  }
+}
