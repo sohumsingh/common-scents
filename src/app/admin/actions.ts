@@ -266,35 +266,47 @@ export async function saveStock(_state: AdminFormState, formData: FormData): Pro
     const stock = stockRaw === "" ? null : Number(stockRaw);
     if (!Number.isInteger(price) || price < 0) return { error: `A price for ${productId} (${variantId}) isn't a whole number of rand.` };
     if (stock !== null && (!Number.isInteger(stock) || stock < 0)) return { error: `Stock for ${productId} (${variantId}) must be a whole number or empty.` };
+    // Skip sizes that weren't changed (the form sends what each one started as).
+    if (String(formData.get(`was:${ref}`) ?? "") === `${price}|${stock ?? ""}`) continue;
     updates.push({ productId, variantId, price, stock });
   }
 
-  for (const update of updates) {
-    const { error } = await supabase
-      .from("product_variants")
-      .update({ price_zar: update.price, stock_quantity: update.stock })
-      .eq("product_id", update.productId)
-      .eq("id", update.variantId);
-    if (error) return { error: `Couldn't save ${update.productId}: ${error.message}` };
-  }
+  if (updates.length === 0) return { message: "Nothing to save — no changes." };
 
-  // Keep each product's list price and stock status in step with its sizes.
-  const { data: products } = await supabase.from("products").select("id, price_zar, product_variants(id, price_zar, stock_quantity)");
-  for (const product of products ?? []) {
-    const sizes = product.product_variants as { id: string; price_zar: number; stock_quantity: number | null }[];
-    if (sizes.length === 0) continue;
-    const listStillMatches = sizes.some((size) => size.price_zar === product.price_zar);
-    await supabase
-      .from("products")
-      .update({
-        stock_status: stockStatus(sizes.map((size) => size.stock_quantity)),
-        ...(listStillMatches ? {} : { price_zar: Math.max(...sizes.map((size) => size.price_zar)) }),
-      })
-      .eq("id", product.id);
-  }
+  const results = await Promise.all(
+    updates.map((update) =>
+      supabase
+        .from("product_variants")
+        .update({ price_zar: update.price, stock_quantity: update.stock })
+        .eq("product_id", update.productId)
+        .eq("id", update.variantId),
+    ),
+  );
+  const failed = results.find((result) => result.error);
+  if (failed?.error) return { error: `Couldn't save every size: ${failed.error.message}` };
+
+  // Keep the changed fragrances' list price and stock status in step with their sizes.
+  const changed = [...new Set(updates.map((update) => update.productId))];
+  const { data: products } = await supabase
+    .from("products")
+    .select("id, price_zar, product_variants(id, price_zar, stock_quantity)")
+    .in("id", changed);
+  await Promise.all(
+    (products ?? []).map((product) => {
+      const sizes = product.product_variants as { id: string; price_zar: number; stock_quantity: number | null }[];
+      const listStillMatches = sizes.some((size) => size.price_zar === product.price_zar);
+      return supabase
+        .from("products")
+        .update({
+          stock_status: stockStatus(sizes.map((size) => size.stock_quantity)),
+          ...(listStillMatches || sizes.length === 0 ? {} : { price_zar: Math.max(...sizes.map((size) => size.price_zar)) }),
+        })
+        .eq("id", product.id);
+    }),
+  );
 
   updateTag(CATALOGUE_TAG);
-  return { message: `Saved ${updates.length} sizes.` };
+  return { message: `Saved ${updates.length} size${updates.length === 1 ? "" : "s"}.` };
 }
 
 /* ------------------------------------------------------------------------ */
@@ -314,7 +326,13 @@ export async function saveBrand(_state: AdminFormState, formData: FormData): Pro
   if (family !== "designer" && family !== "middle-eastern") return { error: "Choose Designer or Middle Eastern." };
   if (order === "invalid") return { error: "Order must be a whole number." };
 
-  const row = { slug, name, family, ...(order !== null ? { sort_order: order } : {}) };
+  // A new brand without an order goes to the end of the list.
+  let sortOrder = order;
+  if (sortOrder === null && !existing) {
+    const { data: last } = await supabase.from("brands").select("sort_order").order("sort_order", { ascending: false }).limit(1);
+    sortOrder = (last?.[0]?.sort_order ?? -1) + 1;
+  }
+  const row = { slug, name, family, ...(sortOrder !== null ? { sort_order: sortOrder } : {}) };
   const result = existing
     ? await supabase.from("brands").update(row).eq("slug", existing)
     : await supabase.from("brands").insert(row);

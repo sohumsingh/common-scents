@@ -68,7 +68,10 @@ export function StockForm({ rows }: { rows: StockRow[] }) {
                       </>
                     ) : null}
                   </td>
-                  <td className="px-4 py-2 text-stone">{row.size}</td>
+                  <td className="px-4 py-2 text-stone">
+                    {row.size}
+                    <input type="hidden" name={`was:${ref}`} value={`${row.price}|${row.stock ?? ""}`} />
+                  </td>
                   <td className="px-4 py-2">
                     <input
                       name={`price:${ref}`}
