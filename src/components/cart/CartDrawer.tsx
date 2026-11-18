@@ -1,22 +1,33 @@
 "use client";
 
 import { useRestoreFocus } from "@/hooks/useRestoreFocus";
+import { CheckoutGate } from "./CheckoutGate";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useRef } from "react";
 import { useCart } from "./CartProvider";
 import { Bottle } from "@/components/product/Bottle";
 import { formatZAR } from "@/lib/format";
-import { features } from "@/lib/site";
 import { Portal } from "@/components/ui/Portal";
 import { occasions } from "@/lib/catalogue/occasions";
 
 const occasionsInOrder = [...occasions].sort((a, b) => a.order - b.order);
 
 export function CartDrawer() {
-  const { items, itemCount, subtotal, isOpen, closeCart, removeItem, setQuantity, clearCart } =
+  const { items, itemCount, subtotal, isOpen, openCart, closeCart, removeItem, setQuantity, clearCart } =
     useCart();
   useRestoreFocus(isOpen);
   const closeRef = useRef<HTMLButtonElement>(null);
+  const pathname = usePathname();
+
+  // Returning from sign-in at checkout (`?bag=open`): reopen the bag and tidy the address.
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    if (url.searchParams.get("bag") !== "open") return;
+    url.searchParams.delete("bag");
+    window.history.replaceState(window.history.state, "", url);
+    openCart();
+  }, [pathname, openCart]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -206,18 +217,7 @@ export function CartDrawer() {
                 Delivery and payment options are confirmed at checkout.
               </p>
 
-              <button
-                type="button"
-                disabled
-                className="mt-4 w-full cursor-not-allowed bg-charcoal/85 px-6 py-4 text-[11px] uppercase tracking-[0.18em] text-ivory"
-              >
-                Proceed to checkout
-              </button>
-              <p className="mt-2.5 border border-gold/30 bg-gold/8 px-3 py-2.5 text-[11px] leading-relaxed text-gold-deep">
-                {features.checkout
-                  ? "Checkout is not connected yet."
-                  : "Checkout is not connected yet — no payment provider has been configured. Our team is completing that step now."}
-              </p>
+              <CheckoutGate />
               <button
                 type="button"
                 onClick={clearCart}

@@ -1,8 +1,12 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { occasions } from "@/lib/catalogue/occasions";
+import { updateSession } from "@/lib/supabase/proxy";
 
 /**
- * Real 404s for unknown product and collection addresses.
+ * Runs before every page:
+ *
+ *  1. Refreshes the visitor's login session (lib/supabase/proxy.ts).
+ *  2. Gives unknown product and collection addresses a real 404.
  *
  * Product and collection pages stream (so navigation feels instant), and a
  * page that has started streaming can no longer change its HTTP status. This
@@ -43,21 +47,30 @@ async function loadProductSlugs(): Promise<Set<string> | null> {
 }
 
 export async function proxy(request: NextRequest) {
-  const [, section, slug] = request.nextUrl.pathname.split("/");
+  // Every page: keep the visitor's login session fresh.
+  const session = await updateSession(request);
+
+  // Product and collection addresses: answer unknown ones with a real 404.
+  const [, section, slug, extra] = request.nextUrl.pathname.split("/");
+  if (extra !== undefined || !slug || (section !== "shop" && section !== "collections")) return session;
 
   if (section === "collections") {
-    return collectionSlugs.has(slug) ? NextResponse.next() : notFound(request);
+    return collectionSlugs.has(slug) ? session : notFound(request, session);
   }
 
   const slugs = await loadProductSlugs();
-  if (!slugs || slugs.has(slug)) return NextResponse.next();
-  return notFound(request);
+  if (!slugs || slugs.has(slug)) return session;
+  return notFound(request, session);
 }
 
-function notFound(request: NextRequest) {
-  return NextResponse.rewrite(new URL("/__not-found", request.url));
+/** Rewrite to the 404 page, keeping any refreshed session cookies. */
+function notFound(request: NextRequest, session: NextResponse) {
+  const response = NextResponse.rewrite(new URL("/__not-found", request.url));
+  session.cookies.getAll().forEach((cookie) => response.cookies.set(cookie));
+  return response;
 }
 
 export const config = {
-  matcher: ["/shop/:slug", "/collections/:slug"],
+  // Every page, but not Next.js build files, images or other static assets.
+  matcher: ["/((?!_next/static|_next/image|favicon.ico|icon.png|apple-icon.png|images/|brand/|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|txt|xml)$).*)"],
 };

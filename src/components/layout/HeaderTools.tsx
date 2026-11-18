@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { SearchOverlay } from "@/components/search/SearchOverlay";
 import { CartButton } from "@/components/cart/CartButton";
+import { AccountButton } from "@/components/account/AccountButton";
 import { MobileNav } from "@/components/layout/MobileNav";
 import type { SearchIndexEntry } from "@/lib/catalogue/service";
 
@@ -29,6 +30,8 @@ export function HeaderTools({
             <path d="m16 16 4 4" strokeLinecap="round" />
           </svg>
         </button>
+
+        <AccountButton />
 
         <CartButton />
 

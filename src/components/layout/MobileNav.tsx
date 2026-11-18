@@ -5,11 +5,13 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Logo, LogoMark } from "@/components/brand/Logo";
 import { Portal } from "@/components/ui/Portal";
+import { useAuthUser } from "@/hooks/useAuthUser";
 
 type NavItem = { label: string; href: string };
 
 export function MobileNav({ items }: { items: readonly NavItem[] }) {
   const [open, setOpen] = useState(false);
+  const auth = useAuthUser();
   useRestoreFocus(open);
 
   useEffect(() => {
@@ -102,6 +104,14 @@ export function MobileNav({ items }: { items: readonly NavItem[] }) {
                 </li>
               ))}
             </ul>
+
+            <Link
+              href={auth.status === "signed-in" ? "/account" : "/account/sign-in"}
+              onClick={() => setOpen(false)}
+              className="mt-6 flex min-h-12 items-center justify-center gap-2.5 border border-charcoal/25 text-[11px] uppercase tracking-[0.2em] text-charcoal transition-colors hover:border-charcoal hover:bg-charcoal hover:text-ivory"
+            >
+              {auth.status === "signed-in" ? "My account" : "Sign in or register"}
+            </Link>
 
             <div className="mt-10 flex items-center gap-4 border-t border-line pt-6">
               <LogoMark className="w-11 opacity-80" />
