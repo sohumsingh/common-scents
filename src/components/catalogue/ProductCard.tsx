@@ -6,6 +6,7 @@ import { formatSizes, formatZAR, lowestPrice } from "@/lib/format";
 import { occasionBySlug } from "@/lib/catalogue/occasions";
 import { getDefaultVariant } from "@/lib/catalogue/variants";
 import { getProductBadge } from "@/lib/catalogue/service";
+import { productAvailability } from "@/lib/catalogue/stock";
 import type { Product } from "@/lib/types";
 
 export function ProductCard({
@@ -33,7 +34,8 @@ export function ProductCard({
     .filter((occasion): occasion is NonNullable<typeof occasion> => Boolean(occasion));
   const hasSizeChoice = product.variants.length > 1;
   const hasPriceRange = new Set(product.variants.map((variant) => variant.priceZAR)).size > 1;
-  const badge = getProductBadge(product);
+  const soldOut = productAvailability(product.variants) === "sold-out";
+  const badge = soldOut ? "Sold out" : getProductBadge(product);
 
   return (
     <article
@@ -50,7 +52,7 @@ export function ProductCard({
 
         {badge ? (
           <span className="absolute left-4 top-4 z-10">
-            <Badge tone="gold">{badge}</Badge>
+            <Badge tone={soldOut ? "neutral" : "gold"}>{badge}</Badge>
           </span>
         ) : null}
 
@@ -121,6 +123,8 @@ export function ProductCard({
             <AddToCartButton
               product={product}
               variantId={getDefaultVariant(product).id}
+              disabled={soldOut}
+              label={soldOut ? "Sold out" : undefined}
               className="whitespace-nowrap border border-charcoal/25 px-4 py-2.5 text-[11px] uppercase tracking-[0.16em] text-charcoal transition-colors hover:border-charcoal hover:bg-charcoal hover:text-ivory"
             />
           ) : null}

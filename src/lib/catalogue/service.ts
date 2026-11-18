@@ -170,6 +170,7 @@ export async function getCartCatalogue(): Promise<CartCatalogue> {
         visual: product.visual,
         image: product.image,
         occasions: product.occasions,
+        stock: variant.stock ?? null,
       };
     }
   }

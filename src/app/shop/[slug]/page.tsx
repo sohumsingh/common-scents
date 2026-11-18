@@ -9,6 +9,8 @@ import { ProductPurchasePanel } from "@/components/product/ProductPurchasePanel"
 import { ProductCard } from "@/components/catalogue/ProductCard";
 import { BackToResults } from "@/components/catalogue/ResultsTrail";
 import { InfoNote } from "@/components/ui/InfoNote";
+import { AvailabilityNote } from "@/components/product/AvailabilityNote";
+import { schemaAvailability } from "@/lib/catalogue/stock";
 import { Badge } from "@/components/ui/Badge";
 import { genderLabels } from "@/lib/format";
 import { occasionBySlug } from "@/lib/catalogue/occasions";
@@ -84,6 +86,7 @@ async function ProductPageContent({ params }: { params: PageProps<"/shop/[slug]"
     .map((occasion) => occasionBySlug.get(occasion))
     .filter((occasion): occasion is NonNullable<typeof occasion> => Boolean(occasion));
 
+  const offerAvailability = schemaAvailability(product.variants);
   const productJsonLd = {
     "@context": "https://schema.org",
     "@type": "Product",
@@ -102,7 +105,7 @@ async function ProductPageContent({ params }: { params: PageProps<"/shop/[slug]"
             highPrice: Math.max(...product.variants.map((variant) => variant.priceZAR)),
             offerCount: product.variants.length,
             priceCurrency: "ZAR",
-            availability: "https://schema.org/PreOrder",
+            availability: offerAvailability,
             url: `${site.url}/shop/${product.slug}`,
             seller: { "@type": "Organization", name: site.name },
           }
@@ -110,7 +113,7 @@ async function ProductPageContent({ params }: { params: PageProps<"/shop/[slug]"
             "@type": "Offer",
             price: product.variants[0]?.priceZAR ?? product.priceZAR,
             priceCurrency: "ZAR",
-            availability: "https://schema.org/PreOrder",
+            availability: offerAvailability,
             url: `${site.url}/shop/${product.slug}`,
             seller: { "@type": "Organization", name: site.name },
           },
@@ -218,11 +221,7 @@ async function ProductPageContent({ params }: { params: PageProps<"/shop/[slug]"
 
             {/* Availability */}
             <div className="mt-8 space-y-3">
-              <InfoNote tone="pending" title="Availability">
-                Stock figures for this fragrance are still being confirmed with our suppliers. The
-                item is shown in the catalogue as a proposed line and can be added to your bag in
-                the meantime.
-              </InfoNote>
+              <AvailabilityNote product={product} />
               <InfoNote tone="info" title="Delivery">
                 Common Scents delivers nationwide across South Africa. Delivery pricing and
                 timelines are confirmed at checkout once the courier is connected.

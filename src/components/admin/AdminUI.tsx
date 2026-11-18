@@ -1,4 +1,7 @@
 import type { ReactNode } from "react";
+import { LOW_STOCK } from "@/lib/catalogue/stock";
+
+export { LOW_STOCK };
 
 /** Shared, presentational pieces for the admin pages (server-safe). */
 
@@ -98,5 +101,3 @@ export function StockText({ quantity }: { quantity: number | null }) {
   return <span className="tabular-nums text-charcoal">{quantity}</span>;
 }
 
-/** At or below this many bottles, a size counts as low stock. */
-export const LOW_STOCK = 3;

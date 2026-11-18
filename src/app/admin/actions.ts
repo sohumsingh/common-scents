@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { assertAdmin } from "@/lib/admin/auth";
 import { CATALOGUE_TAG } from "@/lib/catalogue/db";
 import { occasions } from "@/lib/catalogue/occasions";
+import { LOW_STOCK } from "@/lib/catalogue/stock";
 
 /**
  * Admin actions. Each one: checks admin access, validates the input, writes
@@ -14,7 +15,6 @@ import { occasions } from "@/lib/catalogue/occasions";
 
 export type AdminFormState = { error?: string; message?: string };
 
-const LOW_STOCK = 3;
 const SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const COLOUR = /^#[0-9a-fA-F]{6}$/;
 const GENDERS = ["men", "women", "unisex"] as const;

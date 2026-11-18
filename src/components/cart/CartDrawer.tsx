@@ -8,6 +8,7 @@ import { useEffect, useRef } from "react";
 import { useCart } from "./CartProvider";
 import { Bottle } from "@/components/product/Bottle";
 import { formatZAR } from "@/lib/format";
+import { LOW_STOCK, maxQuantity } from "@/lib/catalogue/stock";
 import { Portal } from "@/components/ui/Portal";
 import { occasions } from "@/lib/catalogue/occasions";
 
@@ -161,6 +162,11 @@ export function CartDrawer() {
                           {item.name}
                         </Link>
                         <p className="text-[11px] text-muted">{item.variantLabel}</p>
+                        {item.stock === 0 ? (
+                          <p className="mt-1 text-[11px] text-red-800">Sold out since you added it — please remove it.</p>
+                        ) : item.stock !== null && item.stock !== undefined && item.stock <= LOW_STOCK ? (
+                          <p className="mt-1 text-[11px] text-gold-deep">Only {item.stock} left</p>
+                        ) : null}
                       </div>
                       <button
                         type="button"
@@ -190,7 +196,9 @@ export function CartDrawer() {
                           type="button"
                           aria-label={`Increase quantity of ${item.name}`}
                           onClick={() => setQuantity(item.key, item.quantity + 1)}
-                          className="grid h-8 w-8 place-items-center text-stone transition-colors hover:bg-parchment hover:text-charcoal"
+                          disabled={item.quantity >= maxQuantity(item.stock)}
+                          title={item.quantity >= maxQuantity(item.stock) && item.stock ? `Only ${item.stock} in stock` : undefined}
+                          className="grid h-8 w-8 place-items-center text-stone transition-colors hover:bg-parchment hover:text-charcoal disabled:cursor-not-allowed disabled:opacity-35 disabled:hover:bg-transparent"
                         >
                           <svg viewBox="0 0 24 24" className="h-3 w-3" fill="none" stroke="currentColor" strokeWidth="1.6">
                             <path d="M12 5v14M5 12h14" />

@@ -63,7 +63,7 @@ type ProductRow = {
   wear_longevity_hours: number | string | null;
   trending_rank: number | null;
   brands: { name: string } | null;
-  product_variants: { id: string; label: string; size: string; price_zar: number; sort_order: number }[];
+  product_variants: { id: string; label: string; size: string; price_zar: number; stock_quantity: number | null; sort_order: number }[];
   product_occasions: { occasion_slug: OccasionSlug; sort_order: number }[];
 };
 
@@ -102,7 +102,13 @@ function toProduct(row: ProductRow): Omit<Product, "badge"> {
     ...(row.compare_at_price_zar !== null ? { compareAtPriceZAR: row.compare_at_price_zar } : {}),
     variants: [...row.product_variants]
       .sort(bySortOrder)
-      .map((variant) => ({ id: variant.id, label: variant.label, size: variant.size, priceZAR: variant.price_zar })),
+      .map((variant) => ({
+        id: variant.id,
+        label: variant.label,
+        size: variant.size,
+        priceZAR: variant.price_zar,
+        stock: variant.stock_quantity,
+      })),
     shortDescription: row.short_description,
     description: row.description,
     character: row.character,
@@ -150,7 +156,7 @@ export async function loadCatalogue(): Promise<Catalogue> {
     supabase
       .from("products")
       .select(
-        "*, brands(name), product_variants(id, label, size, price_zar, sort_order), product_occasions(occasion_slug, sort_order)",
+        "*, brands(name), product_variants(id, label, size, price_zar, stock_quantity, sort_order), product_occasions(occasion_slug, sort_order)",
       )
       .order("sort_order"),
     supabase.from("brands").select("slug, name, family").order("sort_order"),

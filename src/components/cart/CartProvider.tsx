@@ -13,6 +13,7 @@ import {
 import type { CartLine, Product, ProductVariant } from "@/lib/types";
 import { useIsMounted } from "@/hooks/useIsMounted";
 import type { CartCatalogue } from "@/lib/catalogue/service";
+import { MAX_PER_LINE, maxQuantity } from "@/lib/catalogue/stock";
 
 const STORAGE_KEY = "common-scents-cart-v1";
 
@@ -38,12 +39,14 @@ function reducer(state: CartState, action: CartAction): CartState {
 
     case "add": {
       const key = lineKey(action.product.id, action.variant.id);
+      const cap = maxQuantity(action.variant.stock);
+      if (cap === 0) return state; // sold out
       const existing = state.items.find((item) => item.key === key);
       if (existing) {
         return {
           items: state.items.map((item) =>
             item.key === key
-              ? { ...item, quantity: Math.min(item.quantity + action.quantity, 99) }
+              ? { ...item, stock: action.variant.stock ?? null, quantity: Math.min(item.quantity + action.quantity, cap) }
               : item,
           ),
         };
@@ -58,10 +61,11 @@ function reducer(state: CartState, action: CartAction): CartState {
         variantId: action.variant.id,
         variantLabel: action.variant.label,
         priceZAR: action.variant.priceZAR,
-        quantity: Math.min(action.quantity, 99),
+        quantity: Math.min(action.quantity, cap),
         visual: action.product.visual,
         image: action.product.image,
         occasions: action.product.occasions,
+        stock: action.variant.stock ?? null,
       };
       return { items: [...state.items, line] };
     }
@@ -76,7 +80,7 @@ function reducer(state: CartState, action: CartAction): CartState {
       return {
         items: state.items.map((item) =>
           item.key === action.key
-            ? { ...item, quantity: Math.min(action.quantity, 99) }
+            ? { ...item, quantity: Math.min(action.quantity, Math.max(1, maxQuantity(item.stock))) }
             : item,
         ),
       };
@@ -144,7 +148,10 @@ function reconcileSavedBag(saved: unknown, catalogue: CartCatalogue): CartLine[]
     if (!current) continue;
     const count = Number.isFinite(quantity) ? Math.floor(quantity as number) : 0;
     if (count < 1) continue;
-    const merged = Math.min((lines.get(key)?.quantity ?? 0) + count, 99);
+    // Never more than is in stock; a size that has since sold out stays in the
+    // bag (marked sold out) so the customer sees what happened.
+    const cap = maxQuantity(current.stock);
+    const merged = Math.min((lines.get(key)?.quantity ?? 0) + count, cap > 0 ? cap : MAX_PER_LINE);
     lines.set(key, { ...current, key, quantity: merged });
   }
   return [...lines.values()];

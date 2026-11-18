@@ -56,6 +56,8 @@ export type ProductVariant = {
   /** Size only, e.g. "100 ml". */
   size: string;
   priceZAR: number;
+  /** Bottles in stock; null while unconfirmed by the supplier. */
+  stock?: number | null;
 };
 
 /**
@@ -166,6 +168,8 @@ export type CartLine = {
   visual: ProductVisual;
   image?: ProductImage;
   occasions: OccasionSlug[];
+  /** Bottles in stock for this size (null while unconfirmed), used to cap the quantity. */
+  stock?: number | null;
 };
 
 export type CatalogueFilters = {
