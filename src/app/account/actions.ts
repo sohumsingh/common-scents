@@ -49,6 +49,7 @@ function explain(message: string): string {
   if (m.includes("rate limit") || m.includes("too many")) return "Too many attempts. Please wait a minute and try again.";
   if (m.includes("password") && m.includes("weak")) return "Please choose a stronger password.";
   if (m.includes("same password")) return "Your new password must be different from your current one.";
+  if (m.includes("email address") && m.includes("invalid")) return "Please use a real email address you can receive mail at.";
   if (m.includes("not authorized") || m.includes("sending confirmation") || m.includes("sending recovery")) {
     return "We couldn't send the confirmation email just now. Please try again later or contact us.";
   }

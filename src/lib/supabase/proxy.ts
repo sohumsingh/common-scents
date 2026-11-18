@@ -4,13 +4,14 @@ import { NextResponse, type NextRequest } from "next/server";
 /**
  * Refreshes the visitor's login session (if any) on each request, and hands
  * the refreshed cookies both to the page being rendered and to the browser.
- * Returns the response to continue with, carrying those cookies.
+ * Returns the response to continue with (carrying those cookies) and whether
+ * the visitor is signed in.
  */
-export async function updateSession(request: NextRequest): Promise<NextResponse> {
+export async function updateSession(request: NextRequest): Promise<{ response: NextResponse; signedIn: boolean }> {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
   let response = NextResponse.next({ request });
-  if (!url || !key) return response;
+  if (!url || !key) return { response, signedIn: false };
 
   const supabase = createServerClient(url, key, {
     cookies: {
@@ -28,7 +29,7 @@ export async function updateSession(request: NextRequest): Promise<NextResponse>
 
   // Nothing may run between creating the client and this call: it refreshes
   // an expiring session, and skipping it can sign people out at random.
-  await supabase.auth.getClaims();
+  const { data } = await supabase.auth.getClaims();
 
-  return response;
+  return { response, signedIn: Boolean(data?.claims?.sub) };
 }

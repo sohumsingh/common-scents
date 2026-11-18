@@ -6,7 +6,8 @@ import { updateSession } from "@/lib/supabase/proxy";
  * Runs before every page:
  *
  *  1. Refreshes the visitor's login session (lib/supabase/proxy.ts).
- *  2. Gives unknown product and collection addresses a real 404.
+ *  2. Sends signed-out visitors away from the admin area.
+ *  3. Gives unknown product and collection addresses a real 404.
  *
  * Product and collection pages stream (so navigation feels instant), and a
  * page that has started streaming can no longer change its HTTP status. This
@@ -25,8 +26,14 @@ const collectionSlugs = new Set<string>(occasions.map((occasion) => occasion.slu
 const SLUG_TTL_MS = 60_000;
 let productSlugs: { set: Set<string>; fetchedAt: number } | null = null;
 
-async function loadProductSlugs(): Promise<Set<string> | null> {
-  if (productSlugs && Date.now() - productSlugs.fetchedAt < SLUG_TTL_MS) return productSlugs.set;
+/** Re-check an unknown address at most this often, so newly added products work at once. */
+const MISS_RECHECK_MS = 5_000;
+
+async function loadProductSlugs(lookingFor?: string): Promise<Set<string> | null> {
+  const age = productSlugs ? Date.now() - productSlugs.fetchedAt : Infinity;
+  const fresh = age < SLUG_TTL_MS;
+  const missing = lookingFor !== undefined && productSlugs !== null && !productSlugs.set.has(lookingFor);
+  if (productSlugs && fresh && !(missing && age > MISS_RECHECK_MS)) return productSlugs.set;
 
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
@@ -48,7 +55,17 @@ async function loadProductSlugs(): Promise<Set<string> | null> {
 
 export async function proxy(request: NextRequest) {
   // Every page: keep the visitor's login session fresh.
-  const session = await updateSession(request);
+  const { response: session, signedIn } = await updateSession(request);
+
+  // The admin area: signed-out visitors go to sign in before anything is sent.
+  // (Admin rights themselves are checked by each admin page and action.)
+  if (!signedIn && request.nextUrl.pathname.startsWith("/admin")) {
+    const signInUrl = new URL("/account/sign-in", request.url);
+    signInUrl.searchParams.set("next", request.nextUrl.pathname);
+    const toSignIn = NextResponse.redirect(signInUrl);
+    session.cookies.getAll().forEach((cookie) => toSignIn.cookies.set(cookie));
+    return toSignIn;
+  }
 
   // Product and collection addresses: answer unknown ones with a real 404.
   const [, section, slug, extra] = request.nextUrl.pathname.split("/");
@@ -58,7 +75,7 @@ export async function proxy(request: NextRequest) {
     return collectionSlugs.has(slug) ? session : notFound(request, session);
   }
 
-  const slugs = await loadProductSlugs();
+  const slugs = await loadProductSlugs(slug);
   if (!slugs || slugs.has(slug)) return session;
   return notFound(request, session);
 }

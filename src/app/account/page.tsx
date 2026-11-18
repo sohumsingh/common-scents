@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import Link from "next/link";
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { Container } from "@/components/ui/Container";
@@ -85,7 +86,10 @@ async function AccountDetails({ searchParams }: { searchParams: PageProps<"/acco
           </p>
           {isAdmin ? (
             <InfoNote tone="pending" title="Admin" className="mt-6 max-w-md">
-              This account has admin access. The admin dashboard is the next thing being built.
+              This account has admin access.{" "}
+              <Link href="/admin" className="text-charcoal underline decoration-gold/60 underline-offset-4">
+                Open the admin dashboard →
+              </Link>
             </InfoNote>
           ) : null}
         </section>
