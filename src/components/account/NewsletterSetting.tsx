@@ -60,6 +60,9 @@ export function NewsletterSetting({
           {when ? <span className="block text-[12px] text-muted">Last changed {changedOn.format(when)}</span> : null}
         </p>
       </div>
+      <p className="text-[12px] leading-relaxed text-muted">
+        In development: newsletter emails aren&apos;t being sent yet. Your choice is saved for when they start.
+      </p>
       {state.error ? (
         <p role="alert" className="text-[13px] text-red-900">
           {state.error}
