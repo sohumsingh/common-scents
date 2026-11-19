@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuthUser } from "@/hooks/useAuthUser";
-import { features } from "@/lib/site";
+import { DEMO_CHECKOUT_NOTE } from "@/lib/checkout";
+import { useCart } from "./CartProvider";
 
 /**
  * The checkout step in the bag. Anyone can fill the bag; checking out needs
@@ -12,6 +13,7 @@ import { features } from "@/lib/site";
  */
 export function CheckoutGate() {
   const auth = useAuthUser();
+  const { items, closeCart } = useCart();
   const pathname = usePathname();
   const back = encodeURIComponent(`${pathname}?bag=open`);
 
@@ -38,20 +40,27 @@ export function CheckoutGate() {
     );
   }
 
+  const soldOut = items.some((item) => item.stock === 0);
+
   return (
     <>
-      <button
-        type="button"
-        disabled
-        className="mt-4 w-full cursor-not-allowed bg-charcoal/85 px-6 py-4 text-[11px] uppercase tracking-[0.18em] text-ivory"
+      {soldOut ? (
+        <p className="mt-4 text-[12px] leading-relaxed text-red-900">
+          Remove the sold-out item from your bag to check out.
+        </p>
+      ) : null}
+      <Link
+        href="/checkout"
+        onClick={closeCart}
+        aria-disabled={soldOut}
+        tabIndex={soldOut ? -1 : undefined}
+        className={`sheen mt-4 flex h-12 w-full items-center justify-center bg-charcoal px-6 text-[11px] uppercase tracking-[0.18em] text-ivory transition-colors duration-300 hover:bg-noir ${
+          soldOut ? "pointer-events-none opacity-50" : ""
+        }`}
       >
         Proceed to checkout
-      </button>
-      <p className="mt-2.5 border border-gold/30 bg-gold/8 px-3 py-2.5 text-[11px] leading-relaxed text-gold-deep">
-        {features.checkout
-          ? "Checkout is not connected yet."
-          : "Checkout is not connected yet — no payment provider has been configured. Our team is completing that step now."}
-      </p>
+      </Link>
+      <p className="mt-2.5 text-center text-[11px] leading-relaxed text-muted">{DEMO_CHECKOUT_NOTE}</p>
     </>
   );
 }

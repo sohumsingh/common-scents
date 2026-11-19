@@ -10,6 +10,9 @@ import { InfoNote } from "@/components/ui/InfoNote";
 import { Button } from "@/components/ui/Button";
 import { createClient, getCurrentUser } from "@/lib/supabase/server";
 import { signOut } from "./actions";
+import { listOrders } from "@/lib/orders";
+import { OrderStatusPill } from "@/components/orders/OrderView";
+import { formatZAR } from "@/lib/format";
 
 export const metadata: Metadata = {
   title: "My account",
@@ -17,17 +20,17 @@ export const metadata: Metadata = {
 };
 
 const memberSince = new Intl.DateTimeFormat("en-ZA", { month: "long", year: "numeric" });
+const orderDay = new Intl.DateTimeFormat("en-ZA", { day: "numeric", month: "short", year: "numeric" });
 
 async function AccountDetails({ searchParams }: { searchParams: PageProps<"/account">["searchParams"] }) {
   const user = await getCurrentUser();
   if (!user) redirect("/account/sign-in?next=/account");
 
   const supabase = await createClient();
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("full_name, email, role, created_at")
-    .eq("id", user.id)
-    .single();
+  const [{ data: profile }, orders] = await Promise.all([
+    supabase.from("profiles").select("full_name, email, role, created_at").eq("id", user.id).single(),
+    listOrders(supabase, { userId: user.id, limit: 20 }),
+  ]);
 
   const params = await searchParams;
   const firstName = profile?.full_name?.split(" ")[0];
@@ -81,9 +84,38 @@ async function AccountDetails({ searchParams }: { searchParams: PageProps<"/acco
           <h2 id="orders-heading" className="text-[11px] uppercase tracking-[0.22em] text-gold-deep">
             Your orders
           </h2>
-          <p className="mt-6 max-w-md text-[14px] leading-relaxed text-stone">
-            Your orders will appear here once checkout opens. Until then, your bag is saved on this device.
-          </p>
+          {orders.length === 0 ? (
+            <p className="mt-6 max-w-md text-[14px] leading-relaxed text-stone">
+              You haven&apos;t placed an order yet. When you do, you can follow it here.
+            </p>
+          ) : (
+            <ul className="mt-4 divide-y divide-line">
+              {orders.map((order) => (
+                <li key={order.id}>
+                  <Link
+                    href={`/account/orders/${order.order_number}`}
+                    className="group flex items-center justify-between gap-4 py-4"
+                  >
+                    <span className="min-w-0">
+                      <span className="block text-[15px] text-charcoal transition-colors group-hover:text-gold-deep">
+                        {order.order_number}
+                      </span>
+                      <span className="mt-0.5 block text-[12px] text-stone">
+                        {orderDay.format(new Date(order.created_at))} · {order.item_count} item{order.item_count === 1 ? "" : "s"} ·{" "}
+                        {formatZAR(order.total_zar)}
+                      </span>
+                    </span>
+                    <span className="flex shrink-0 items-center gap-3">
+                      <OrderStatusPill status={order.status} />
+                      <span aria-hidden="true" className="text-stone transition-transform group-hover:translate-x-1">
+                        →
+                      </span>
+                    </span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          )}
           {isAdmin ? (
             <InfoNote tone="pending" title="Admin" className="mt-6 max-w-md">
               This account has admin access.{" "}

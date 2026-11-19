@@ -365,3 +365,25 @@ export async function setRole(formData: FormData): Promise<void> {
   if (error) redirect(`/admin/customers?error=${encodeURIComponent(error.message)}`);
   redirect("/admin/customers?updated=1");
 }
+
+/* ------------------------------------------------------------------------ */
+/* Orders                                                                   */
+/* ------------------------------------------------------------------------ */
+
+const ORDER_STATUSES = ["paid", "processing", "shipped", "delivered", "cancelled"] as const;
+
+export async function setOrderStatus(formData: FormData): Promise<void> {
+  const { supabase } = await assertAdmin();
+  const id = str(formData, "id");
+  const number = str(formData, "number");
+  const status = str(formData, "status");
+  const back = `/admin/orders/${encodeURIComponent(number)}`;
+  if (!(ORDER_STATUSES as readonly string[]).includes(status)) redirect(`${back}?error=${encodeURIComponent("Choose a status.")}`);
+  if (status === "cancelled" && str(formData, "confirm") !== "cancel") redirect(`${back}?confirmCancel=1`);
+
+  const { error } = await supabase.rpc("admin_set_order_status", { target: id, new_status: status });
+  if (error) redirect(`${back}?error=${encodeURIComponent(error.message)}`);
+  // Cancelling puts stock back on the shop.
+  if (status === "cancelled") updateTag(CATALOGUE_TAG);
+  redirect(`${back}?updated=1`);
+}

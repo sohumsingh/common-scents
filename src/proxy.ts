@@ -6,7 +6,8 @@ import { updateSession } from "@/lib/supabase/proxy";
  * Runs before every page:
  *
  *  1. Refreshes the visitor's login session (lib/supabase/proxy.ts).
- *  2. Sends signed-out visitors away from the admin area.
+ *  2. Sends signed-out visitors to sign in before the admin area, checkout
+ *     and order pages.
  *  3. Gives unknown product and collection addresses a real 404.
  *
  * Product and collection pages stream (so navigation feels instant), and a
@@ -57,9 +58,10 @@ export async function proxy(request: NextRequest) {
   // Every page: keep the visitor's login session fresh.
   const { response: session, signedIn } = await updateSession(request);
 
-  // The admin area: signed-out visitors go to sign in before anything is sent.
+  // Signed-in areas: signed-out visitors go to sign in before anything is sent.
   // (Admin rights themselves are checked by each admin page and action.)
-  if (!signedIn && request.nextUrl.pathname.startsWith("/admin")) {
+  const { pathname } = request.nextUrl;
+  if (!signedIn && (pathname.startsWith("/admin") || pathname === "/checkout" || pathname.startsWith("/account/orders"))) {
     const signInUrl = new URL("/account/sign-in", request.url);
     signInUrl.searchParams.set("next", request.nextUrl.pathname);
     const toSignIn = NextResponse.redirect(signInUrl);

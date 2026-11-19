@@ -36,10 +36,10 @@ export const defaultShareImage = {
  * when it is not.
  */
 export const features = {
-  /** No payment provider is connected. The checkout button explains this. */
-  checkout: false,
-  /** Customer accounts are not yet implemented. */
-  accounts: false,
+  /** Checkout works end to end as a demo: orders are real, payment is simulated. */
+  checkout: true,
+  /** Customer accounts (Supabase Auth). */
+  accounts: true,
   /** Newsletter capture stores intent locally; no email provider is connected. */
   newsletter: false,
   /** Contact submissions are validated and acknowledged but not yet delivered. */

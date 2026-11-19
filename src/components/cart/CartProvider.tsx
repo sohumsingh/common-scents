@@ -7,6 +7,7 @@ import {
   useEffect,
   useMemo,
   useReducer,
+  useRef,
   useState,
   type ReactNode,
 } from "react";
@@ -26,7 +27,8 @@ type CartAction =
   | { type: "remove"; key: string }
   | { type: "setQuantity"; key: string; quantity: number }
   | { type: "clear" }
-  | { type: "hydrate"; items: CartLine[] };
+  | { type: "hydrate"; items: CartLine[] }
+  | { type: "refresh"; catalogue: CartCatalogue };
 
 function lineKey(productId: string, variantId: string) {
   return `${productId}::${variantId}`;
@@ -36,6 +38,9 @@ function reducer(state: CartState, action: CartAction): CartState {
   switch (action.type) {
     case "hydrate":
       return { items: action.items };
+
+    case "refresh":
+      return { items: reconcileSavedBag(state.items, action.catalogue) };
 
     case "add": {
       const key = lineKey(action.product.id, action.variant.id);
@@ -111,6 +116,8 @@ export type AddedNotice = {
 
 type CartContextValue = {
   items: CartLine[];
+  /** False until the saved bag has been read back on this device. */
+  ready: boolean;
   itemCount: number;
   subtotal: number;
   isOpen: boolean;
@@ -171,8 +178,17 @@ export function CartProvider({
   const [addedNotice, setAddedNotice] = useState<AddedNotice | null>(null);
   const hydrated = useIsMounted();
 
-  // Restore the cart after mount so server and client markup stay identical.
+  // Restore the saved bag once, after mount, so server and client markup stay
+  // identical. When the catalogue changes later (new prices or stock, e.g.
+  // after an order), the bag in memory is re-checked instead: reading storage
+  // again could bring back a bag that has just been emptied.
+  const restored = useRef(false);
   useEffect(() => {
+    if (restored.current) {
+      dispatch({ type: "refresh", catalogue });
+      return;
+    }
+    restored.current = true;
     try {
       const stored = window.localStorage.getItem(STORAGE_KEY);
       if (stored) {
@@ -232,6 +248,7 @@ export function CartProvider({
     );
     return {
       items: state.items,
+      ready: hydrated,
       itemCount,
       subtotal,
       isOpen,
@@ -248,6 +265,7 @@ export function CartProvider({
     };
   }, [
     state.items,
+    hydrated,
     isOpen,
     lastAdded,
     addedNotice,
