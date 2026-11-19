@@ -12,7 +12,7 @@ export const site = {
   headline: "Find Your Scent for Every Moment.",
   description:
     "Common Scents is a South African online fragrance retailer helping you discover designer and Middle Eastern fragrances suited to your personality, your lifestyle and the moment you are dressing for.",
-  url: "https://commonscents.co.za",
+  url: "https://commonscents.vercel.app",
   locale: "en-ZA",
   currency: "ZAR",
 } as const;
