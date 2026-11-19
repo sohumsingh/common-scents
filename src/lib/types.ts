@@ -184,5 +184,4 @@ export type SortKey =
   | "featured"
   | "newest"
   | "price-asc"
-  | "price-desc"
-  | "popularity";
+  | "price-desc";

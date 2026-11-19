@@ -27,8 +27,8 @@ export async function TrendingSection() {
           reveal
           tone="dark"
           eyebrow="Trending Now"
-          title="The ones people keep asking for."
-          description="A curated selection chosen by our buyers. Live sales data will replace this list once the store is trading."
+          title="The scents everyone's talking about."
+          description="Our most-wanted fragrances right now, hand-picked by our buyers."
           action={
             <ArrowLink href="/shop" tone="dark">
               Shop all

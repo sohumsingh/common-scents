@@ -45,13 +45,12 @@ export async function AboutTeaser() {
               About Common Scents
             </p>
             <h2 className="mt-5 max-w-xl text-balance text-[clamp(2rem,min(4.4vw,7svh),4rem)] leading-[1.04] text-charcoal">
-              Fragrance is how you turn up for a moment.
+              Fragrance is how you make a moment yours.
             </h2>
             <div className="mt-7 max-w-lg space-y-4 text-[clamp(15px,1.15vw,17px)] leading-relaxed text-stone">
               <p>
-                A scent is not a detail you add at the end of getting dressed. It is part of how you
-                meet a room, a meeting, a memory. Common Scents exists to make finding the right
-                one less of a gamble.
+                A scent is not just a detail you add at the end of getting dressed. It is part of how
+                you meet a room. Common Scents exists to make finding the right one simple.
               </p>
               <p>
                 We curate designer and Middle Eastern fragrances side by side, and we organise them

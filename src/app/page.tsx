@@ -59,9 +59,9 @@ export default async function HomePage() {
               <SectionHeading
                 reveal
                 eyebrow="Discover Your Signature Scent"
-                title="Not sure where to start? Start with what you know."
+                title="Not sure where to start? Let us help."
                 titleClassName="text-[clamp(2rem,min(3.4vw,6svh),3rem)]"
-                description="Tell us the moment, the character you like, how much you want to come across and what you would like to spend. We will point you at fragrances that genuinely fit — drawn from the catalogue on this site, nothing invented."
+                description="Answer a few quick questions and we'll find the fragrances made for you."
               />
             }
           />

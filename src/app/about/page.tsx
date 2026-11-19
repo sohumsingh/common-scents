@@ -5,9 +5,9 @@ import { Container } from "@/components/ui/Container";
 import { Breadcrumbs } from "@/components/layout/PageHeader";
 import { Bottle } from "@/components/product/Bottle";
 import { Button } from "@/components/ui/Button";
+import { LogoMark } from "@/components/brand/Logo";
 import { stagger } from "@/components/motion/stagger";
 import { SectionHeading } from "@/components/ui/SectionHeading";
-import { InfoNote } from "@/components/ui/InfoNote";
 import { getProductBySlug, getProductsByOccasion } from "@/lib/catalogue/service";
 import { occasions } from "@/lib/catalogue/occasions";
 
@@ -35,8 +35,8 @@ const principles = [
     body: "Both families deserve to be taken seriously. We do not treat one as the premium tier and the other as the alternative. They are curated on the same terms: does it smell good, does it suit the moment, and is the pricing honest?",
   },
   {
-    title: "Say what is actually known",
-    body: "Where product details are not yet confirmed with our suppliers, we say so on the page rather than inventing it. Pricing, availability and authenticity are the three things a fragrance buyer is most entitled to clarity on.",
+    title: "Honest by design",
+    body: "Clear prices, clear sizes and clear descriptions, with stock shown as it really is. Everything you need to choose with confidence is on the page, and nothing is dressed up.",
   },
   {
     title: "Accessible, not exclusive",
@@ -88,14 +88,14 @@ export default async function AboutPage() {
                 className="rise-in mt-[clamp(1rem,2.5svh,1.5rem)] text-balance text-[clamp(2.4rem,min(5vw,8svh),4.4rem)] leading-[1.02] text-charcoal"
                 style={stagger(2)}
               >
-                Fragrance is personal. Shopping for it shouldn&apos;t feel impersonal.
+                Fragrance is personal. Finding yours should be too.
               </h1>
               <p
                 className="rise-in mt-[clamp(1rem,3svh,1.75rem)] max-w-xl text-[clamp(1rem,1.2vw,1.1rem)] leading-relaxed text-stone"
                 style={stagger(3)}
               >
-                Common Scents is a South African online fragrance retailer built on a simple idea:
-                people are far better at choosing a scent for a moment than for a marketing category.
+                Common Scents is a South African online fragrance store built on a simple idea: it is
+                easier to choose a scent for a moment in your life than from a list of brands.
               </p>
               <div className="rise-in mt-[clamp(1.5rem,4.5svh,2.5rem)] flex flex-wrap gap-3" style={stagger(4)}>
                 <Button href="/shop">Browse the catalogue</Button>
@@ -133,8 +133,8 @@ export default async function AboutPage() {
                 Why moments
               </span>
               <p className="mt-6 font-display text-[clamp(1.8rem,min(3.4vw,6svh),3rem)] leading-[1.2] text-charcoal">
-                A fragrance is not a detail you add at the end of getting dressed. It is part of how
-                you meet a room, a meeting, a memory.
+                A fragrance is not just a detail you add at the end of getting dressed. It is part of how
+                you meet a room.
               </p>
             </div>
 
@@ -145,7 +145,7 @@ export default async function AboutPage() {
             >
               <p>
                 Most perfume websites ask you to choose a gender first, then browse a brand, then
-                work out which bottle suits. It is a sensible-sounding system that rarely matches
+                work out which bottle suits you. It is a sensible-sounding system that rarely matches
                 how anyone actually decides what to wear.
               </p>
               <p>
@@ -171,8 +171,8 @@ export default async function AboutPage() {
           <SectionHeading
             reveal
             eyebrow="How we work"
-            title="Four things we hold to."
-            description="These are the principles the catalogue is built on, and the standard we will be held to."
+            title="What we stand for."
+            description="Four principles that shape everything we stock and how we sell it."
           />
 
           <div className="mt-[clamp(2rem,5svh,3.5rem)] grid gap-x-12 gap-y-[clamp(1.25rem,4svh,3rem)] sm:grid-cols-2">
@@ -244,39 +244,46 @@ export default async function AboutPage() {
         </Container>
       </section>
 
-      {/* 5 — Honest status */}
-      <section className={`fit-viewport border-t border-line bg-parchment/45 ${sectionPad}`}>
+      {/* 5 — Closing invitation */}
+      <section className={`border-t border-line ${sectionPad}`}>
         <Container>
-          <div className="grid items-center gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:gap-20">
-            <div data-reveal>
-              <p className="eyebrow flex items-center gap-3">
+          <div
+            data-reveal
+            className="relative overflow-hidden bg-noir px-6 py-[clamp(3rem,9svh,6rem)] text-center sm:px-12"
+          >
+            {/* Quiet monogram watermarks and a gold rule, echoing the brand marks. */}
+            <div aria-hidden="true" className="pointer-events-none absolute -left-12 -top-14 w-[clamp(12rem,20vw,20rem)] opacity-[0.06]">
+              <LogoMark tone="ivory" className="w-full" />
+            </div>
+            <div aria-hidden="true" className="pointer-events-none absolute -bottom-16 -right-10 w-[clamp(14rem,24vw,24rem)] rotate-6 opacity-[0.06]">
+              <LogoMark tone="ivory" className="w-full" />
+            </div>
+            <span aria-hidden="true" className="absolute inset-x-0 top-0 h-[3px] bg-gold" />
+
+            <div className="relative mx-auto max-w-2xl">
+              <p className="eyebrow inline-flex items-center gap-3 text-gold">
                 <span aria-hidden="true" className="h-px w-8 bg-gold" />
-                Where we are
+                Get in touch
+                <span aria-hidden="true" className="h-px w-8 bg-gold" />
               </p>
-              <h2 className="mt-5 text-balance text-[clamp(2rem,min(4vw,7svh),3.6rem)] leading-[1.05] text-charcoal">
-                A young business, honestly labelled.
+              <h2 className="mt-5 text-balance text-[clamp(2.1rem,min(4.4vw,7svh),3.8rem)] leading-[1.05] text-ivory">
+                Questions? <span className="italic text-sand">We&apos;re here to help.</span>
               </h2>
-              <p className="mt-6 max-w-md text-[clamp(0.95rem,1.1vw,1.05rem)] leading-relaxed text-stone">
-                Common Scents is still being built. A few things are decided; a few are not. We
-                would rather show you the list than let you discover it at checkout.
+              <p className="mx-auto mt-6 max-w-lg text-[clamp(0.95rem,1.1vw,1.05rem)] leading-relaxed text-ivory/65">
+                Not sure which fragrance is right for you, or need a hand with an order? Send us a
+                message and we&apos;ll get back to you.
               </p>
-              <div className="mt-8">
-                <Button href="/contact" variant="secondary">
-                  Ask us anything
+              <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
+                <Link
+                  href="/contact"
+                  className="sheen inline-flex min-h-12 items-center justify-center bg-ivory px-8 text-[11px] uppercase tracking-[0.2em] text-charcoal transition-colors duration-300 hover:bg-paper"
+                >
+                  Contact us
+                </Link>
+                <Button href="/shop" variant="light">
+                  Browse the catalogue
                 </Button>
               </div>
-            </div>
-
-            <div data-reveal style={stagger(1)} className="grid gap-4 sm:grid-cols-2">
-              <InfoNote tone="notice" title="In place" className="sm:p-6 sm:text-[13px]">
-                Brand positioning, the signature logo and visual identity, the occasion-led catalogue
-                structure, the storefront, the shopping bag, and the customer enquiry process.
-              </InfoNote>
-              <InfoNote tone="pending" title="Still being confirmed" className="sm:p-6 sm:text-[13px]">
-                Product photography, the full product catalogue, supplier pricing and stock,
-                delivery partner and fees, returns policy, payment provider, and our official
-                contact details.
-              </InfoNote>
             </div>
           </div>
         </Container>

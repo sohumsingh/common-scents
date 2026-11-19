@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Logo, LogoMark } from "@/components/brand/Logo";
 import { Container } from "@/components/ui/Container";
-import { contact, nav, site, social } from "@/lib/site";
+import { contact, nav, site } from "@/lib/site";
 import { getCurrentYear } from "@/lib/current-year";
 import { stagger } from "@/components/motion/stagger";
 
@@ -27,21 +27,6 @@ export async function SiteFooter() {
               moment you are dressing for — from an ordinary Tuesday to a night worth remembering.
             </p>
             <p className="mt-5 font-display text-xl italic text-gold">{site.tagline}</p>
-
-            <ul className="mt-7 flex flex-wrap gap-x-6 gap-y-3">
-              {social.map((channel) => (
-                <li key={channel.label}>
-                  <a
-                    href={channel.href}
-                    target="_blank"
-                    rel="noreferrer noopener"
-                    className="link-underline text-[11px] uppercase tracking-[0.2em] text-ivory/75 transition-colors hover:text-ivory"
-                  >
-                    {channel.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
           </div>
 
           {/* Link columns */}
@@ -79,7 +64,6 @@ export async function SiteFooter() {
             >
               {contact.email}
             </a>
-            <p className="mt-1.5 text-[12px] text-ivory/45">Placeholder — to be confirmed</p>
           </div>
           <div>
             <h2 className="text-[11px] uppercase tracking-[0.24em] text-gold">Phone</h2>
@@ -100,8 +84,7 @@ export async function SiteFooter() {
             © {year} {site.name}. All rights reserved.
           </p>
           <p className="max-w-xl text-[12px] leading-relaxed text-ivory/45">
-            Common Scents is a developing retail business. Catalogue pricing, stock and product
-            imagery shown on this site are placeholders pending supplier confirmation.
+            Common Scents is a portfolio project. Products and prices are for demonstration only.
           </p>
         </Container>
       </div>

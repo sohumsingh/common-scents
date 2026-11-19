@@ -13,8 +13,7 @@ export default function PrivacyPage() {
     <InfoPage
       title="Privacy Policy"
       description="What we collect, why we collect it, and what we will never do with it."
-      updated="Draft policy — written against South African POPIA and the current feature set."
-      draftNote="This policy reflects the features that exist today. It will be reviewed once customer accounts, payment processing and the mailing list are connected."
+      updated="Last updated 19 November 2026"
     >
       <InfoSection title="The short version">
         <p>
@@ -26,10 +25,11 @@ export default function PrivacyPage() {
       <InfoSection title="What we collect">
         <InfoList
           items={[
+            "Account details — your name and email address when you register. Your password is stored securely by our sign-in provider; we never see it.",
+            "Order details — what you ordered, your phone number and your delivery address.",
             "Enquiry details — your name, email address, subject and message when you contact us.",
-            "Order details — what you bought, where it is being delivered and how you paid, once checkout is connected.",
-            "Technical information — your browser type, device and pages visited, in order to understand how the site is used.",
-            "Newsletter addresses — only if you choose to subscribe.",
+            "Newsletter preference — whether you have chosen to subscribe, and when you last changed it.",
+            "Technical information — basic records our hosting providers keep to run the site securely, such as your browser type and IP address.",
           ]}
         />
       </InfoSection>
@@ -37,10 +37,11 @@ export default function PrivacyPage() {
       <InfoSection title="How we use it">
         <InfoList
           items={[
-            "To answer your enquiries and support your order.",
-            "To process and deliver purchases.",
-            "To send you the newsletter, if you have asked for it. Every email includes an unsubscribe link.",
-            "To understand which pages are useful and where the site needs work.",
+            "To run your account and let you follow your orders.",
+            "To prepare and deliver your orders.",
+            "To answer your enquiries.",
+            "To send you the newsletter, if you have asked for it. You can unsubscribe at any time from your account.",
+            "To keep the site secure and working properly.",
             "To meet our legal and tax obligations.",
           ]}
         />
@@ -56,33 +57,35 @@ export default function PrivacyPage() {
 
       <InfoSection title="Payment information">
         <p>
-          Payment details are handled entirely by our payment provider and never touch our servers.
-          We only receive confirmation of the payment method, the amount and the reference.
+          Common Scents is a demo shop: checkout is simulated, no payment is taken and no card or
+          bank details are collected. We only record which payment option you picked and a demo
+          payment reference with your order.
         </p>
       </InfoSection>
 
       <InfoSection title="Your rights">
         <p>
           Under the Protection of Personal Information Act (POPIA), you can ask us what personal
-          information we hold about you, request corrections, or ask us to delete it. Contact us and
-          we will action it. Note that we are required to keep certain transaction records for tax
-          purposes.
+          information we hold about you, request corrections, or ask us to delete it. You can change
+          your name and newsletter preference yourself on your account page; for anything else,
+          contact us and we will action it.
         </p>
       </InfoSection>
 
       <InfoSection title="Sharing">
         <p>
-          We share only what is necessary to fulfil an order — with our courier so they can deliver
-          it, and with our payment provider so they can take the payment. We do not share your
-          information with advertisers or data brokers.
+          Your information is stored with our database and sign-in provider, Supabase, and the site
+          is hosted by a web hosting provider. They process it only to run the site on our behalf. We
+          do not share your information with advertisers or data brokers.
         </p>
       </InfoSection>
 
       <InfoSection title="Cookies">
         <p>
-          This site uses functional storage for your shopping bag and your display preferences. We
-          do not use advertising cookies. If advertising or analytics cookies are introduced later,
-          this policy will be updated and you will be told before they are used.
+          We use a sign-in cookie to keep you logged in, and your browser&apos;s storage to remember
+          your shopping bag. Both are needed for the site to work. We do not use advertising or
+          analytics cookies; if that ever changes, this policy will be updated and you will be told
+          before they are used.
         </p>
       </InfoSection>
 

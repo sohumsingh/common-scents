@@ -51,7 +51,7 @@ export function InfoPage({
                   {draftNote}
                 </InfoNote>
               ) : null}
-              <InfoNote tone="info" title="Need more help?" className="mt-4">
+              <InfoNote tone="info" title="Need more help?" className={draftNote ? "mt-4" : ""}>
                 Our customer support team is happy to walk you through any of this. Get in touch
                 and we will explain it in plain terms.
               </InfoNote>

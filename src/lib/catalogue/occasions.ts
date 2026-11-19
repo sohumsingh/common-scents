@@ -11,7 +11,7 @@ export const occasions: Occasion[] = [
     shortName: "Daily",
     tagline: "Versatile, comfortable fragrances you can wear without thinking twice.",
     description:
-      "The fragrances you reach for without thinking — comfortable, adaptable and easy to wear from Monday to Sunday. Daily Wear scents are the ones that earn their place on your shelf: they sit close to the skin, suit a full day of wear and never overpower the room you are in.",
+      "Easy, comfortable scents you can wear every day. They last all day without ever being too much.",
     question: "What should I wear every day?",
     accent: "#8C8272",
     wash: "#E7E0D2",
@@ -47,7 +47,7 @@ export const occasions: Occasion[] = [
     shortName: "Active",
     tagline: "Light, fresh and invigorating scents for active environments.",
     description:
-      "Clean, energetic fragrances that feel good during movement — the gym, a morning run, a long afternoon outdoors. Active scents keep things light and breathable rather than heavy, so you stay comfortable while you work.",
+      "Fresh, clean scents for the gym, a morning run or a day outdoors. Light enough to stay comfortable while you move.",
     question: "What is something fresh for the gym?",
     accent: "#5F8A87",
     wash: "#DEE9E6",
@@ -59,7 +59,7 @@ export const occasions: Occasion[] = [
     shortName: "Office",
     tagline: "Refined, clean and unobtrusive fragrances for professional settings.",
     description:
-      "Considered, professional scents that read as well-mannered rather than loud. Office Wear fragrances are polished and reliable — the kind you can wear through a full day of meetings without anyone noticing anything but the fact that you smell put together.",
+      "Polished, professional scents that are noticed without being loud. Easy to wear through a full day of meetings.",
     question: "What fragrance works for the office?",
     accent: "#6B7280",
     wash: "#E3E5E8",

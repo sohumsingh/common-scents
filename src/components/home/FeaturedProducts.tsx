@@ -14,8 +14,8 @@ export async function FeaturedProducts() {
         <SectionHeading
           reveal
           eyebrow="Featured Fragrances"
-          title="A considered edit of the catalogue."
-          description="Not the whole range — the pieces we would put in front of someone finding their way in."
+          title="Safe to buy blind."
+          description="New to fragrance? Start here. Crowd-pleasers that are easy to love and known for turning heads."
           action={<ArrowLink href="/shop">Shop all fragrances</ArrowLink>}
         />
 

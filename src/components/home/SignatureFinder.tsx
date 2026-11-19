@@ -63,7 +63,7 @@ const occasionOptions: { value: OccasionSlug; label: string }[] = [
  * something that exists today.
  */
 const disclaimer =
-  "These suggestions are matched against the current catalogue using the fragrance characteristics listed on each product page. AI-assisted personalisation is a planned enhancement — it is not active yet.";
+  "These suggestions are matched against the current catalogue using the fragrance characteristics listed on each product page.";
 
 export function SignatureFinder({
   catalogue,

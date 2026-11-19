@@ -105,10 +105,16 @@ export function ProductPurchasePanel({ product }: { product: Product }) {
       {selected ? (
         <p className="text-[12px] text-stone">
           {selected.label} ·{" "}
-          <span className="tabular-nums text-charcoal">{formatZAR(selected.priceZAR)}</span> ·{" "}
-          <span className={availabilityTone[sizeAvailability(selected.stock)]}>
-            {availabilityLabel(selected.stock)}
-          </span>
+          <span className="tabular-nums text-charcoal">{formatZAR(selected.priceZAR)}</span>
+          {/* Stock is only mentioned once a figure has been set for this size. */}
+          {sizeAvailability(selected.stock) !== "unconfirmed" ? (
+            <>
+              {" "}·{" "}
+              <span className={availabilityTone[sizeAvailability(selected.stock)]}>
+                {availabilityLabel(selected.stock)}
+              </span>
+            </>
+          ) : null}
         </p>
       ) : null}
     </div>

@@ -58,10 +58,6 @@ export function ProductGallery({ product, wear }: { product: Product; wear?: Wea
               />
             </div>
           ) : null}
-
-          <span className="absolute bottom-4 left-4 z-10 rounded-full bg-paper/85 px-3 py-1.5 text-[11px] uppercase tracking-[0.16em] text-stone backdrop-blur-sm">
-            Representative image
-          </span>
         </div>
       )}
 

@@ -8,8 +8,6 @@ import { ProductGallery } from "@/components/product/ProductGallery";
 import { ProductPurchasePanel } from "@/components/product/ProductPurchasePanel";
 import { ProductCard } from "@/components/catalogue/ProductCard";
 import { BackToResults } from "@/components/catalogue/ResultsTrail";
-import { InfoNote } from "@/components/ui/InfoNote";
-import { AvailabilityNote } from "@/components/product/AvailabilityNote";
 import { schemaAvailability } from "@/lib/catalogue/stock";
 import { Badge } from "@/components/ui/Badge";
 import { genderLabels } from "@/lib/format";
@@ -193,11 +191,6 @@ async function ProductPageContent({ params }: { params: PageProps<"/shop/[slug]"
                 product={product}
                 className="font-display text-[2rem] leading-none tabular-nums text-charcoal"
               />
-              {product.pricingStatus === "indicative" ? (
-                <span className="text-[11px] uppercase tracking-[0.16em] text-gold-deep">
-                  Indicative price
-                </span>
-              ) : null}
             </div>
 
             <p className="mt-[clamp(0.9rem,2.5svh,1.5rem)] max-w-xl text-[0.95rem] leading-relaxed text-stone">
@@ -217,15 +210,6 @@ async function ProductPageContent({ params }: { params: PageProps<"/shop/[slug]"
 
             <div className="mt-[clamp(1.25rem,3svh,2rem)] border-t border-line pt-[clamp(1.25rem,3svh,2rem)]">
               <ProductPurchasePanel product={product} />
-            </div>
-
-            {/* Availability */}
-            <div className="mt-8 space-y-3">
-              <AvailabilityNote product={product} />
-              <InfoNote tone="info" title="Delivery">
-                Common Scents delivers nationwide across South Africa. Delivery pricing and
-                timelines are confirmed at checkout once the courier is connected.
-              </InfoNote>
             </div>
 
             {/* Occasions */}
@@ -279,9 +263,7 @@ async function ProductPageContent({ params }: { params: PageProps<"/shop/[slug]"
               ))}
             </ul>
             <p className="mt-5 text-[11px] leading-relaxed text-muted">
-              {product.notesStatus === "verified"
-                ? "Notes confirmed against supplier documentation."
-                : "These notes are published from well-known public brand literature and are awaiting confirmation against supplier documentation."}
+              These notes are published from well-known public brand literature.
             </p>
           </section>
 

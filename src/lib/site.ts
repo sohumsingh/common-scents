@@ -53,19 +53,12 @@ export const features = {
  * details are listed as an outstanding decision in the project brief.
  */
 export const contact = {
-  email: "hello@commonscents.co.za",
+  email: "commonscentsdev@gmail.com",
   phone: "+27 (0) 00 000 0000",
   hours: "Monday to Friday, 9:00 – 17:00 SAST",
   responseTime: "We aim to reply within two business days.",
   isPlaceholder: true,
 } as const;
-
-/** Social profiles are placeholders until the brand accounts are created. */
-export const social = [
-  { label: "Instagram", href: "https://instagram.com", handle: "@commonscents" },
-  { label: "TikTok", href: "https://tiktok.com", handle: "@commonscents" },
-  { label: "Facebook", href: "https://facebook.com", handle: "Common Scents" },
-] as const;
 
 export const nav = {
   primary: [

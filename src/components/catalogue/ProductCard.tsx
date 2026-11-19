@@ -102,11 +102,6 @@ export function ProductCard({
             <p className="mt-1.5 whitespace-nowrap text-[11px] tabular-nums text-stone">
               {formatSizes(product.variants)}
             </p>
-            {product.pricingStatus === "indicative" ? (
-              <p className="mt-1.5 text-[11px] uppercase tracking-[0.14em] text-muted">
-                Indicative price
-              </p>
-            ) : null}
           </div>
 
           {showAddToCart && hasSizeChoice ? (

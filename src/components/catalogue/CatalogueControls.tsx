@@ -299,9 +299,8 @@ export function CatalogueToolbar() {
             className="appearance-none border border-line bg-paper py-2.5 pl-4 pr-9 text-[12px] text-charcoal focus:outline-none focus:ring-1 focus:ring-charcoal/30"
           >
             {SORT_OPTIONS.map((option) => (
-              <option key={option.value} value={option.value} disabled={option.disabled}>
+              <option key={option.value} value={option.value}>
                 {option.label}
-                {option.disabled ? " — coming soon" : ""}
               </option>
             ))}
           </select>

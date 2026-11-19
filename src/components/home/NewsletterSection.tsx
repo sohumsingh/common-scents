@@ -152,12 +152,6 @@ export function NewsletterSection() {
             </p>
 
             <div className="mt-10">{body}</div>
-            <p className="mx-auto mt-6 inline-flex max-w-md items-center gap-2 text-[11px] leading-relaxed text-muted">
-              <span className="shrink-0 rounded-full border border-gold/50 px-2 py-0.5 uppercase tracking-[0.14em] text-gold-deep">
-                In development
-              </span>
-              <span className="text-left">Newsletter emails aren&apos;t being sent yet. Your choice is saved for when they start.</span>
-            </p>
           </div>
         </div>
       </Container>

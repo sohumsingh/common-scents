@@ -19,8 +19,8 @@ export default function TermsPage() {
       <InfoSection title="Using this site">
         <p>
           By browsing Common Scents you agree to these terms. You may browse, search and add items
-          to your bag without registering an account. You need an account only for features such
-          as order history, which are not yet live.
+          to your bag without registering an account. You need an account to check out and to
+          view your order history, which you can find on your account page.
         </p>
       </InfoSection>
 

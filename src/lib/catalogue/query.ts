@@ -9,17 +9,11 @@ import type { CatalogueFilters, Gender, OccasionSlug, Product, SortKey } from ".
  * can be unit tested and reused by a future search API.
  */
 
-export const SORT_OPTIONS: { value: SortKey; label: string; disabled?: boolean; note?: string }[] = [
+export const SORT_OPTIONS: { value: SortKey; label: string }[] = [
   { value: "featured", label: "Featured" },
   { value: "newest", label: "Newest arrivals" },
   { value: "price-asc", label: "Price: low to high" },
   { value: "price-desc", label: "Price: high to low" },
-  {
-    value: "popularity",
-    label: "Popularity",
-    disabled: true,
-    note: "Popularity sorting unlocks once live sales data is connected.",
-  },
 ];
 
 export const GENDER_FILTERS: { value: Gender; label: string }[] = [
@@ -49,7 +43,7 @@ export function parseFilters(params: RawSearchParams): CatalogueFilters {
 export function parseSort(params: RawSearchParams): SortKey {
   const sort = typeof params.sort === "string" ? params.sort : "featured";
   const known = SORT_OPTIONS.find((option) => option.value === sort);
-  if (!known || known.disabled) return "featured";
+  if (!known) return "featured";
   return known.value;
 }
 
@@ -103,10 +97,6 @@ export function sortProducts(products: Product[], sort: SortKey): Product[] {
       return sorted.sort(
         (a, b) => new Date(b.addedAt).getTime() - new Date(a.addedAt).getTime(),
       );
-    case "popularity":
-      // No reliable sales data exists yet, so this falls back to the
-      // curated ordering rather than pretending to rank by popularity.
-      return sorted;
     case "featured":
     default:
       return sorted.sort((a, b) => {

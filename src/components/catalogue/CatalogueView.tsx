@@ -10,7 +10,6 @@ import {
   type FacetGroup,
   type CatalogueState,
 } from "@/components/catalogue/CatalogueControls";
-import { InfoNote } from "@/components/ui/InfoNote";
 import {
   applyFilters,
   computeFacetCounts,
@@ -195,12 +194,6 @@ export async function CatalogueView({
                 ))}
               </div>
             )}
-
-            <InfoNote tone="pending" title="About this catalogue" className="mt-12">
-              Common Scents is a developing catalogue. Pricing shown here is indicative and stock
-              availability is still being confirmed with suppliers. Each product page shows exactly
-              what has and has not been verified.
-            </InfoNote>
           </div>
         </div>
       </CatalogueControlsProvider>
