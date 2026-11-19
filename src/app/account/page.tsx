@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { Container } from "@/components/ui/Container";
 import { Breadcrumbs } from "@/components/layout/PageHeader";
 import { ProfileForm } from "@/components/account/AuthForms";
+import { NewsletterSetting } from "@/components/account/NewsletterSetting";
 import { FormSkeleton } from "@/components/account/params";
 import { InfoNote } from "@/components/ui/InfoNote";
 import { Button } from "@/components/ui/Button";
@@ -28,7 +29,7 @@ async function AccountDetails({ searchParams }: { searchParams: PageProps<"/acco
 
   const supabase = await createClient();
   const [{ data: profile }, orders] = await Promise.all([
-    supabase.from("profiles").select("full_name, email, role, created_at").eq("id", user.id).single(),
+    supabase.from("profiles").select("full_name, email, role, created_at, newsletter_opt_in, newsletter_updated_at").eq("id", user.id).single(),
     listOrders(supabase, { userId: user.id, limit: 20 }),
   ]);
 
@@ -77,6 +78,17 @@ async function AccountDetails({ searchParams }: { searchParams: PageProps<"/acco
           </h2>
           <div className="mt-6 max-w-md">
             <ProfileForm fullName={profile?.full_name ?? ""} />
+          </div>
+
+          <h2 id="newsletter-heading" className="mt-12 text-[11px] uppercase tracking-[0.22em] text-gold-deep">
+            Newsletter
+          </h2>
+          <div className="mt-5 max-w-md">
+            <NewsletterSetting
+              email={profile?.email ?? user.email ?? ""}
+              subscribed={Boolean(profile?.newsletter_opt_in)}
+              updatedAt={profile?.newsletter_updated_at ?? null}
+            />
           </div>
         </section>
 

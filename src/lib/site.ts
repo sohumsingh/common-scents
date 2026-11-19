@@ -40,8 +40,8 @@ export const features = {
   checkout: true,
   /** Customer accounts (Supabase Auth). */
   accounts: true,
-  /** Newsletter capture stores intent locally; no email provider is connected. */
-  newsletter: false,
+  /** Subscriptions are saved on the customer's account; no email provider sends them yet. */
+  newsletter: true,
   /** Contact submissions are validated and acknowledged but not yet delivered. */
   contactDelivery: false,
   /** AI recommendations are not implemented. The discovery section is editorial. */

@@ -11,7 +11,7 @@ const joined = new Intl.DateTimeFormat("en-ZA", { day: "numeric", month: "short"
 async function Customers({ searchParams }: { searchParams: PageProps<"/admin/customers">["searchParams"] }) {
   const { supabase, user } = await requireAdmin();
   const [{ data }, params] = await Promise.all([
-    supabase.from("profiles").select("id, full_name, email, role, created_at").order("created_at", { ascending: false }),
+    supabase.from("profiles").select("id, full_name, email, role, created_at, newsletter_opt_in").order("created_at", { ascending: false }),
     searchParams,
   ]);
   const people = data ?? [];
@@ -29,12 +29,13 @@ async function Customers({ searchParams }: { searchParams: PageProps<"/admin/cus
       ) : null}
 
       <div className="overflow-x-auto border border-line bg-paper">
-        <table className="w-full min-w-[40rem] text-left text-[14px]">
+        <table className="w-full min-w-[48rem] text-left text-[14px]">
           <thead className="border-b border-line text-[11px] uppercase tracking-[0.14em] text-stone">
             <tr>
               <th className="px-4 py-3 font-normal">Name</th>
               <th className="px-4 py-3 font-normal">Email</th>
               <th className="px-4 py-3 font-normal">Joined</th>
+              <th className="px-4 py-3 font-normal">Newsletter</th>
               <th className="px-4 py-3 font-normal">Access</th>
               <th className="px-4 py-3 font-normal" />
             </tr>
@@ -51,6 +52,7 @@ async function Customers({ searchParams }: { searchParams: PageProps<"/admin/cus
                   </td>
                   <td className="px-4 py-3 text-stone">{person.email}</td>
                   <td className="px-4 py-3 text-stone">{joined.format(new Date(person.created_at))}</td>
+                  <td className="px-4 py-3">{person.newsletter_opt_in ? <Pill tone="good">Subscribed</Pill> : <span className="text-[12px] text-muted">—</span>}</td>
                   <td className="px-4 py-3">{isAdmin ? <Pill tone="warn">Admin</Pill> : <Pill>Customer</Pill>}</td>
                   <td className="px-4 py-3 text-right">
                     {isYou ? null : (

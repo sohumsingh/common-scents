@@ -164,3 +164,27 @@ export async function signOut(): Promise<void> {
   await supabase.auth.signOut();
   redirect("/");
 }
+
+/* ------------------------------------------------------------------------ */
+/* Newsletter                                                               */
+/* ------------------------------------------------------------------------ */
+
+export type NewsletterState = { subscribed?: boolean; error?: string };
+
+/**
+ * Subscribe or unsubscribe the signed-in customer. The newsletter only ever
+ * goes to the account's own email, so there is no address to type in.
+ */
+export async function setNewsletter(_state: NewsletterState, formData: FormData): Promise<NewsletterState> {
+  const user = await getCurrentUser();
+  if (!user) return { error: "Sign in to manage your newsletter subscription." };
+
+  const subscribe = formData.get("subscribe") === "1";
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("profiles")
+    .update({ newsletter_opt_in: subscribe, newsletter_updated_at: new Date().toISOString() })
+    .eq("id", user.id);
+  if (error) return { error: "We couldn't save that. Please try again." };
+  return { subscribed: subscribe };
+}
