@@ -44,3 +44,7 @@ next-env.d.ts
 # local-only backups made while iterating (git history is the restore point)
 /.claude/backups/
 /.claude/settings.local.json
+
+# Local AI-tool and editor files (kept on this computer, not in the repo)
+AGENTS.md
+/.claude/

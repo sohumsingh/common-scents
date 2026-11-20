@@ -97,7 +97,7 @@ export default function OrdersPage(props: PageProps<"/admin/orders">) {
     <div className="flex flex-col gap-8">
       <AdminHeader
         title="Orders"
-        description="Every order placed through the (demo) checkout. Open one to move it along or cancel it; cancelling puts the stock back."
+        description="Every order placed through the demo checkout. Open one to move it along or cancel it. Cancelling puts the stock back."
       />
       <Suspense fallback={<AdminSkeleton rows={6} />}>
         <Orders searchParams={props.searchParams} />

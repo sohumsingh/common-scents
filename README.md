@@ -122,7 +122,7 @@ supabase/
 tests/            Unit tests (Vitest) for stock, checkout, filtering, sorting and prices
 .github/          GitHub Actions: lint, type-check and tests on every push
 emails/           The new-arrivals newsletter design
-docs/             Screenshots and user-journey notes
+docs/             README screenshots
 material/         Source material, kept apart from the code: the original project brief,
                   the build prompt and the calligraphy logo artwork
 ```

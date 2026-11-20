@@ -226,8 +226,28 @@ export async function saveProduct(_state: AdminFormState, formData: FormData): P
     .eq("product_id", id)
     .not("id", "in", `(${keep.map((value) => `"${value}"`).join(",")})`);
 
+  if (imageSrc !== undefined) {
+    const keepPath = imageSrc ? decodeURIComponent(imageSrc.split("/product-images/")[1] ?? "") : undefined;
+    await removeOldPhotos(supabase, id, keepPath);
+  }
+
   updateTag(CATALOGUE_TAG);
   redirect(`/admin/products/${id}?saved=1`);
+}
+
+/**
+ * Removes a product's uploaded photos from storage (they live in a folder
+ * named after the product), except the one currently in use, if any.
+ */
+async function removeOldPhotos(
+  supabase: Awaited<ReturnType<typeof assertAdmin>>["supabase"],
+  productId: string,
+  keepPath?: string,
+) {
+  const bucket = supabase.storage.from("product-images");
+  const { data: files } = await bucket.list(productId);
+  const stale = (files ?? []).map((file) => `${productId}/${file.name}`).filter((path) => path !== keepPath);
+  if (stale.length > 0) await bucket.remove(stale);
 }
 
 export async function setPublished(formData: FormData): Promise<void> {
@@ -243,6 +263,8 @@ export async function deleteProduct(formData: FormData): Promise<void> {
   const id = str(formData, "id");
   if (str(formData, "confirm") !== "delete") redirect(`/admin/products/${id}?confirmDelete=1`);
   await supabase.from("products").delete().eq("id", id);
+  // Remove its uploaded photos too, so nothing is left behind in storage.
+  await removeOldPhotos(supabase, id);
   updateTag(CATALOGUE_TAG);
   redirect("/admin/products?deleted=1");
 }
