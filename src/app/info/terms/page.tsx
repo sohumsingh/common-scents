@@ -13,9 +13,17 @@ export default function TermsPage() {
     <InfoPage
       title="Terms and Conditions"
       description="The ground rules for using Common Scents and buying from us."
-      updated="Draft terms — confirmed alongside our payment provider, courier and business registration."
-      draftNote="These terms are written against the business as it is currently structured. They will be reviewed once the payment provider, courier and registered business details are confirmed."
+      updated="Last updated 20 November 2026"
     >
+      <InfoSection title="About this site">
+        <p>
+          Common Scents is a portfolio project: a fully working demonstration of an online
+          fragrance store. Orders can be placed and followed, but checkout is simulated — no
+          payment is ever taken and nothing is delivered. Products and prices are for demonstration
+          only.
+        </p>
+      </InfoSection>
+
       <InfoSection title="Using this site">
         <p>
           By browsing Common Scents you agree to these terms. You may browse, search and add items
@@ -28,19 +36,20 @@ export default function TermsPage() {
         <p>
           We work hard to describe every fragrance accurately, including its notes, character and
           the occasions it suits. Product details are gathered from brand materials and our own
-          assessment, and we flag where something is still awaiting confirmation from a supplier.
+          assessment.
         </p>
         <p>
-          Prices are shown in South African Rand and exclude any delivery charge, which is
-          calculated at checkout. Prices may change without notice, and the price confirmed at
-          checkout is the price charged.
+          Prices are shown in South African rand and exclude delivery, which is added at checkout
+          before you pay. Prices may change without notice; the price shown when you place your
+          order is the price that applies to it.
         </p>
       </InfoSection>
 
       <InfoSection title="Orders">
         <InfoList
           items={[
-            "An order is an offer to buy. It becomes a contract when we confirm the order and dispatch the goods.",
+            "An order is an offer to buy. It is accepted when it appears in your account with an order reference.",
+            "Stock is checked again the moment you place an order, so an order can’t be placed for a size that has sold out.",
             "If an item turns out to be unavailable, we will contact you and offer a refund or an alternative — we will not quietly cancel your order.",
             "We may decline an order where a pricing error has occurred, and we will refund you in full.",
           ]}
@@ -49,9 +58,9 @@ export default function TermsPage() {
 
       <InfoSection title="Payment">
         <p>
-          Payment will be processed by a South African payment provider — PayFast or Peach Payments
-          — depending on the provider we contract with. No payment provider is connected to this
-          site yet, so no payment can currently be taken.
+          Checkout offers card and Instant EFT as demonstrations only. No card or bank details are
+          requested or stored, and no money is ever taken. Each order is given a demo payment
+          reference so the full order journey can be shown.
         </p>
       </InfoSection>
 
@@ -74,8 +83,8 @@ export default function TermsPage() {
 
       <InfoSection title="Changes to these terms">
         <p>
-          We may update these terms as the business develops. The revision date at the top of this
-          page shows when they last changed, and the updated version applies from that date.
+          We may update these terms from time to time. The date at the top of this page shows when
+          they last changed, and the updated version applies from that date.
         </p>
       </InfoSection>
 
