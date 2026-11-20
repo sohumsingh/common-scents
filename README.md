@@ -82,6 +82,28 @@ Every change in the admin appears on the live shop straight away.
 
 ---
 
+## 🧭 How this was built
+
+I designed and directed Common Scents, and built it with **[Claude Code](https://claude.com/claude-code)** as an AI pair programmer, which wrote most of the code to my direction. That's why the commits are co-authored with Claude.
+
+**My part:**
+- **Concept and brand:** the idea of shopping by occasion, the South African market, the name, the calligraphy logo, and the project brief the build followed (in [`material/`](material/)).
+- **Product decisions:**
+  - Occasion-first navigation, with gender and brand as secondary filters.
+  - Guests can fill a bag, and sign-in is only needed at checkout.
+  - A realistic demo checkout instead of live payments.
+  - The newsletter tied to your account's email.
+  - What the admin dashboard needed to do.
+- **Review and editing:**
+  - Went through every page of the site, rewrote the copy and checked the design.
+  - Reviewed each feature before it was committed.
+  - Tested the full flows on the live site — orders, accounts and the confirmation emails.
+- **Setup and launch:** set up and connected Supabase, Vercel, GitHub and Brevo, and chose how it's deployed.
+
+**How the work went:** a storefront prototype first (the large first commit), then features added in small, separate steps — the database, accounts, the admin dashboard, real stock, checkout and orders, the newsletter, contact messages, a full copy edit and the launch. Each one was tested before moving on. The commit history shows that order.
+
+---
+
 ## 📁 Project structure
 
 ```
