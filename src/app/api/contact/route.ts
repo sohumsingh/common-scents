@@ -1,16 +1,12 @@
 import { NextResponse } from "next/server";
+import { createClient } from "@/lib/supabase/server";
 
 /**
  * Customer enquiry endpoint.
  *
- * Validation and reference numbering are real. Email delivery is not: no
- * transactional email provider has been configured yet, so the response
- * says so explicitly rather than pretending the message was sent.
- *
- * TO CONNECT EMAIL DELIVERY
- *  1. Add the provider SDK (for example Resend, Postmark or SendGrid).
- *  2. Replace the `delivered: false` branch with the send call.
- *  3. Store the enquiry durably if you want a copy regardless of email.
+ * Checks the message, then saves it through the database function
+ * `submit_enquiry` (which checks it again and limits how often one address
+ * can write). Admins read and answer enquiries under Admin → Messages.
  */
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
@@ -41,12 +37,6 @@ export type ContactResponse = {
   message: string;
 };
 
-function buildReference(): string {
-  const stamp = Date.now().toString(36).toUpperCase().slice(-6);
-  const noise = Math.random().toString(36).toUpperCase().slice(2, 4);
-  return `CS-${stamp}${noise}`;
-}
-
 export async function POST(request: Request) {
   let payload: ContactPayload;
 
@@ -67,9 +57,8 @@ export async function POST(request: Request) {
   if (payload.website) {
     return NextResponse.json<ContactResponse>({
       ok: true,
-      delivered: false,
-      reference: buildReference(),
-      message: "Thank you — your enquiry has been received.",
+      delivered: true,
+      message: "Thank you — your message has been received.",
     });
   }
 
@@ -99,27 +88,34 @@ export async function POST(request: Request) {
     );
   }
 
-  /**
-   * The validated enquiry. This is the record that gets handed to the email
-   * provider (and stored, if the business wants an inbox copy) once delivery
-   * is connected — the payload is already in the right shape.
-   */
-  const enquiry = {
-    reference: buildReference(),
-    receivedAt: new Date().toISOString(),
-    name,
-    email,
-    subject,
-    orderReference: orderReference || null,
-    message,
-  };
+  const supabase = await createClient();
+  const { data: reference, error } = await supabase.rpc("submit_enquiry", {
+    p_name: name,
+    p_email: email,
+    p_subject: subject,
+    p_order_reference: orderReference || null,
+    p_message: message,
+  });
 
-  // Delivery is intentionally not implemented yet.
+  if (error || typeof reference !== "string") {
+    const tooMany = error?.message === "too_many_enquiries";
+    return NextResponse.json<ContactResponse>(
+      {
+        ok: false,
+        delivered: false,
+        message: tooMany
+          ? "You've sent a few messages in a short time. Please wait a few minutes before sending another."
+          : "We couldn't send your message just now. Please try again, or email us directly.",
+      },
+      { status: tooMany ? 429 : 500 },
+    );
+  }
+
+  const firstName = name.split(" ")[0];
   return NextResponse.json<ContactResponse>({
     ok: true,
-    delivered: false,
-    reference: enquiry.reference,
-    message:
-      "Your enquiry passed validation, but email delivery is not connected to Common Scents yet — nothing has been sent. Please use the email address on this page to reach us directly.",
+    delivered: true,
+    reference,
+    message: `Thanks, ${firstName} — we've received your message and will reply to ${email} within two business days.`,
   });
 }

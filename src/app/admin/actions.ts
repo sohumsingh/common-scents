@@ -387,3 +387,20 @@ export async function setOrderStatus(formData: FormData): Promise<void> {
   if (status === "cancelled") updateTag(CATALOGUE_TAG);
   redirect(`${back}?updated=1`);
 }
+
+/* ------------------------------------------------------------------------ */
+/* Messages (contact enquiries)                                             */
+/* ------------------------------------------------------------------------ */
+
+export async function setEnquiryStatus(formData: FormData): Promise<void> {
+  const { supabase } = await assertAdmin();
+  const id = str(formData, "id");
+  const status = str(formData, "status") === "replied" ? "replied" : "new";
+  const back = str(formData, "back") || "/admin/messages";
+  const { error } = await supabase
+    .from("enquiries")
+    .update({ status, replied_at: status === "replied" ? new Date().toISOString() : null })
+    .eq("id", id);
+  if (error) redirect(`${back}${back.includes("?") ? "&" : "?"}error=${encodeURIComponent("Couldn't update that message.")}`);
+  redirect(back);
+}
