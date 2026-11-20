@@ -6,10 +6,7 @@ const tones = {
   notice: "border-charcoal/15 bg-charcoal/[0.04] text-ink",
 } as const;
 
-/**
- * A small editorial note. Used to flag placeholder data and pending
- * integrations so the interface is honest about what is not yet live.
- */
+/** A small boxed note, e.g. help text beside a form or a status message. */
 export function InfoNote({
   title,
   children,

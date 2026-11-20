@@ -1,9 +1,6 @@
 /**
- * Site-wide configuration: brand strings, navigation, contact placeholders and
- * feature flags for capabilities that are not yet connected.
- *
- * Anything here that has not been confirmed by the business is marked as a
- * placeholder so it is obvious what still needs replacing.
+ * Site-wide configuration: brand strings, the live address, contact details
+ * and navigation.
  */
 
 export const site = {
@@ -30,34 +27,11 @@ export const defaultShareImage = {
   alt: `${site.name} — ${site.tagline}`,
 };
 
-/**
- * Capability flags. Each one documents a real integration point so future
- * work has an obvious home, and so the UI never implies a feature is live
- * when it is not.
- */
-export const features = {
-  /** Checkout works end to end as a demo: orders are real, payment is simulated. */
-  checkout: true,
-  /** Customer accounts (Supabase Auth). */
-  accounts: true,
-  /** Subscriptions are saved on the customer's account; no email provider sends them yet. */
-  newsletter: true,
-  /** Contact submissions are validated and acknowledged but not yet delivered. */
-  contactDelivery: false,
-  /** AI recommendations are not implemented. The discovery section is editorial. */
-  aiDiscovery: false,
-} as const;
-
-/**
- * Contact details are placeholders. The business's official support contact
- * details are listed as an outstanding decision in the project brief.
- */
+/** How customers reach the shop. Enquiries arrive in Admin → Messages. */
 export const contact = {
   email: "commonscentsdev@gmail.com",
-  phone: "+27 (0) 00 000 0000",
   hours: "Monday to Friday, 9:00 – 17:00 SAST",
   responseTime: "We aim to reply within two business days.",
-  isPlaceholder: true,
 } as const;
 
 export const nav = {

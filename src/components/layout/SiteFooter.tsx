@@ -55,7 +55,7 @@ export async function SiteFooter() {
         </div>
 
         {/* Contact strip */}
-        <div className="mt-16 grid gap-8 border-t border-ivory/12 pt-10 sm:grid-cols-3">
+        <div className="mt-16 grid gap-8 border-t border-ivory/12 pt-10 sm:grid-cols-2 lg:max-w-3xl">
           <div>
             <h2 className="text-[11px] uppercase tracking-[0.24em] text-gold">Email</h2>
             <a
@@ -64,11 +64,6 @@ export async function SiteFooter() {
             >
               {contact.email}
             </a>
-          </div>
-          <div>
-            <h2 className="text-[11px] uppercase tracking-[0.24em] text-gold">Phone</h2>
-            <p className="mt-3 text-[14px] text-ivory">{contact.phone}</p>
-            <p className="mt-1.5 text-[12px] text-ivory/45">Placeholder — to be confirmed</p>
           </div>
           <div>
             <h2 className="text-[11px] uppercase tracking-[0.24em] text-gold">Support Hours</h2>

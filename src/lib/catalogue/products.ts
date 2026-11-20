@@ -2,29 +2,17 @@ import type { SeedProduct } from "../types";
 
 /**
  * ---------------------------------------------------------------------------
- * SEED CATALOGUE — PLACEHOLDER DATA
+ * SEED CATALOGUE (demo data)
  * ---------------------------------------------------------------------------
  *
- * These are the *proposed* starting fragrances referenced in the project
- * brief, extended with further best-known references from the same house
- * families so that filtering and sorting have something meaningful to work
- * with.
- *
- * IMPORTANT — READ BEFORE PUBLISHING
- *  - Prices are INDICATIVE ONLY. They reflect broadly published public
- *    retail pricing so the storefront behaves correctly, and are flagged in
- *    the interface as unconfirmed. Supplier pricing must replace them.
- *  - Stock is `pending-verification` for every product. No inventory
- *    figures have been invented.
- *  - No ratings, reviews, sales volumes or supplier relationships are
- *    recorded anywhere in this file.
- *  - Fragrance notes are published from well-known public brand literature.
- *    `notesStatus` marks them as awaiting confirmation against supplier
- *    documentation.
+ * The starting fragrances for the demo: well-known designer and Middle
+ * Eastern references, enough for filtering, sorting and the finder to be
+ * meaningful. Prices follow broadly published retail pricing and are for
+ * demonstration only; fragrance notes come from public brand material.
  *
  * SEED SOURCE ONLY. The storefront reads the catalogue from Supabase
  * (see db.ts). This file feeds `npm run db:seed:build`, which regenerates
- * supabase/seed.sql; once the admin dashboard exists, edit products there.
+ * supabase/seed.sql. Day-to-day changes are made in the admin dashboard.
  */
 export const products: SeedProduct[] = [
   {

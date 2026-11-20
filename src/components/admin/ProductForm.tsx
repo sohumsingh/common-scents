@@ -294,7 +294,7 @@ export function ProductForm({
 
       <Section
         title="Sizes, prices and stock"
-        description="Prices in whole rand. Leave stock empty while the supplier hasn't confirmed it. The default size is preselected on the product page and sets the headline price."
+        description="Prices in whole rand. Leave stock empty if you don't want to track it for a size. The default size is preselected on the product page and sets the headline price."
       >
         <div className="overflow-x-auto">
           <table className="w-full min-w-[34rem] text-left text-[14px]">
@@ -317,7 +317,7 @@ export function ProductForm({
                     <input aria-label="Price in rand" inputMode="numeric" value={row.price} onChange={(e) => updateVariant(row.key, { price: e.target.value.replace(/[^\d]/g, "") })} className={adminInput} placeholder="1499" />
                   </td>
                   <td className="py-1.5 pr-3">
-                    <input aria-label="Stock" inputMode="numeric" value={row.stock} onChange={(e) => updateVariant(row.key, { stock: e.target.value.replace(/[^\d]/g, "") })} className={adminInput} placeholder="Unconfirmed" />
+                    <input aria-label="Stock" inputMode="numeric" value={row.stock} onChange={(e) => updateVariant(row.key, { stock: e.target.value.replace(/[^\d]/g, "") })} className={adminInput} placeholder="Not set" />
                   </td>
                   <td className="py-1.5 pr-3 text-center">
                     <input type="radio" aria-label="Default size" checked={row.isDefault} onChange={() => setDefault(row.key)} className="h-4 w-4 accent-charcoal" />
@@ -345,10 +345,6 @@ export function ProductForm({
           >
             + Add a size
           </button>
-          <label className="flex items-center gap-2 text-[13px] text-stone">
-            <input type="checkbox" name="pricing_confirmed" defaultChecked={initial.pricing_status === "confirmed"} className="h-4 w-4 accent-charcoal" />
-            Prices confirmed with the supplier (removes “indicative price”)
-          </label>
           <div className="flex items-center gap-2">
             <Label htmlFor="compare_at_price_zar">‘Was’ price</Label>
             <input id="compare_at_price_zar" name="compare_at_price_zar" inputMode="numeric" defaultValue={initial.compare_at_price_zar ?? ""} className={`${adminInput} w-28`} placeholder="Optional" />
@@ -379,10 +375,6 @@ export function ProductForm({
             </div>
           ))}
         </div>
-        <label className="flex items-center gap-2 text-[13px] text-stone">
-          <input type="checkbox" name="notes_verified" defaultChecked={initial.notes_status === "verified"} className="h-4 w-4 accent-charcoal" />
-          Notes confirmed against supplier documentation
-        </label>
       </Section>
 
       <Section title="Photo" description="WebP, PNG or JPEG up to 5 MB. A transparent or white background works best. Without a photo, the illustrated bottle below is shown.">

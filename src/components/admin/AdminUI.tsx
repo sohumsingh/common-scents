@@ -93,9 +93,9 @@ export function AdminSkeleton({ rows = 6 }: { rows?: number }) {
   );
 }
 
-/** Stock for one size: a number, or "unconfirmed" while the supplier hasn't said. */
+/** Stock for one size: a number, or "not set" when the size isn't tracked. */
 export function StockText({ quantity }: { quantity: number | null }) {
-  if (quantity === null) return <span className="text-muted">Unconfirmed</span>;
+  if (quantity === null) return <span className="text-muted">Not set</span>;
   if (quantity === 0) return <span className="text-red-800">Sold out</span>;
   if (quantity <= LOW_STOCK) return <span className="text-gold-deep">{quantity} left</span>;
   return <span className="tabular-nums text-charcoal">{quantity}</span>;

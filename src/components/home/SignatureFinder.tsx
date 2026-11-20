@@ -58,9 +58,7 @@ const occasionOptions: { value: OccasionSlug; label: string }[] = [
  * A guided, rules-based finder.
  *
  * It scores the real catalogue against the customer's stated preferences and
- * returns products that genuinely match. It is deliberately not presented as
- * an AI feature — AI-assisted recommendations are a planned enhancement, not
- * something that exists today.
+ * returns products that genuinely match.
  */
 const disclaimer =
   "These suggestions are matched against the current catalogue using the fragrance characteristics listed on each product page.";

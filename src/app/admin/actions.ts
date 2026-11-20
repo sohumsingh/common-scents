@@ -170,8 +170,6 @@ export async function saveProduct(_state: AdminFormState, formData: FormData): P
     notes_top: list(str(formData, "notes_top")),
     notes_heart: list(str(formData, "notes_heart")),
     notes_base: list(str(formData, "notes_base")),
-    notes_status: formData.get("notes_verified") === "on" ? "verified" : "pending-verification",
-    pricing_status: formData.get("pricing_confirmed") === "on" ? "confirmed" : "indicative",
     stock_status: stockStatus(variants.map((variant) => variant.stock)),
     added_at: addedAt,
     editorial_badge: str(formData, "editorial_badge") || null,

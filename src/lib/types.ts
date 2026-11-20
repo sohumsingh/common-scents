@@ -91,7 +91,7 @@ export type Product = {
   concentration: string;
   gender: Gender;
   occasions: OccasionSlug[];
-  /** Indicative price in ZAR until supplier pricing is confirmed. */
+  /** The headline price in rand (the default size's price). */
   priceZAR: number;
   compareAtPriceZAR?: number;
   variants: ProductVariant[];
@@ -102,7 +102,7 @@ export type Product = {
   /** Sensory character tags, e.g. "Aromatic", "Warm". */
   character: string[];
   notes: FragranceNotes;
-  /** Notes are published from public brand literature; supplier documentation is still pending. */
+  /** Stored with each product; kept for the data model, not shown on the site. */
   notesStatus: "verified" | "pending-verification";
   pricingStatus: "confirmed" | "indicative";
   stockStatus: "in-stock" | "low-stock" | "out-of-stock" | "pending-verification";
@@ -142,10 +142,7 @@ export type WearGuide = {
   longevityHours: number;
 };
 
-/**
- * A product photograph. Prototype images are placeholders sourced from
- * public listings; replace them with supplier-provided imagery before launch.
- */
+/** A product photograph (demo images, credited in the README). */
 export type ProductImage = { src: string; alt: string };
 
 /** A product with its resolved occasion objects, ready for display. */

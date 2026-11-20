@@ -44,7 +44,7 @@ export default function StockPage() {
     <div className="flex flex-col gap-8">
       <AdminHeader
         title="Stock & prices"
-        description={`Update every size in one go. Leave stock empty while the supplier hasn't confirmed it. Sizes at ${LOW_STOCK} or fewer are highlighted, and each fragrance's “in stock / low / sold out” status updates automatically when you save.`}
+        description={`Update every size in one go. Leave stock empty if you don't want to track it for a size. Sizes at ${LOW_STOCK} or fewer are highlighted, and each fragrance's “in stock / low / sold out” status updates automatically when you save.`}
       />
       <Suspense fallback={<AdminSkeleton rows={12} />}>
         <StockTable />

@@ -1,5 +1,7 @@
 # Common Scents
 
+[![CI](https://github.com/sohumsingh/common-scents/actions/workflows/ci.yml/badge.svg)](https://github.com/sohumsingh/common-scents/actions/workflows/ci.yml)
+
 **Every Moment. Every Scent.**
 
 An online fragrance store for South Africa, built around a simple idea: people find it easier to choose a scent for a *moment* — a date, the office, the gym — than from a wall of brands.
@@ -62,6 +64,7 @@ Every change in the admin appears on the live shop straight away.
 | **Database & auth** | [Supabase](https://supabase.com) — PostgreSQL, Auth, Storage and row-level security |
 | **Hosting** | [Vercel](https://vercel.com) — deploys automatically from `main`, server in London next to the database |
 | **Email** | Supabase Auth over [Brevo](https://www.brevo.com) SMTP, with custom branded templates |
+| **Testing & CI** | [Vitest](https://vitest.dev) unit tests, run with lint and type-checks by GitHub Actions on every push |
 
 ---
 
@@ -116,6 +119,8 @@ supabase/
   migrations/     The full database schema, functions and security rules, in order
   templates/      Branded sign-up and password-reset emails
   seed.sql        The starting catalogue (generated: npm run db:seed:build)
+tests/            Unit tests (Vitest) for stock, checkout, filtering, sorting and prices
+.github/          GitHub Actions: lint, type-check and tests on every push
 emails/           The new-arrivals newsletter design
 docs/             Screenshots and user-journey notes
 material/         Source material, kept apart from the code: the original project brief,
@@ -143,7 +148,15 @@ material/         Source material, kept apart from the code: the original projec
    update public.profiles set role = 'admin' where email = 'you@example.com';
    ```
 
-Other scripts: `npm run build`, `npm run start`, `npm run lint`.
+Other scripts: `npm run build`, `npm run start`, `npm run lint`, `npm run typecheck`.
+
+### Tests
+
+```bash
+npm test
+```
+
+Unit tests ([Vitest](https://vitest.dev), in [`tests/`](tests/)) cover the shop's rules: stock limits and sold-out handling, delivery fees and the free-delivery threshold, filtering, search, sorting and price formatting. GitHub Actions runs the lint, type-check and tests on every push — that's the CI badge at the top.
 
 ---
 
@@ -169,6 +182,12 @@ There is no payment provider, analytics, tracking or advertising — checkout is
 - **Demo only:** checkout simulates payment and nothing is delivered. Order numbers, delivery fees and stock all behave like a real shop.
 - **Product images** (sourced from Fragrantica) are used for demonstration and remain the property of their brands. Common Scents is not affiliated with any fragrance house.
 - **Fragrance notes** come from publicly available brand material; the wear guide is an editorial estimate.
+
+---
+
+## 📄 Licence
+
+© 2026 Sohum Singh. All rights reserved. The code is public so it can be read and reviewed as part of my portfolio; it isn't licensed for reuse. See [LICENSE](LICENSE).
 
 ---
 

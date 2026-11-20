@@ -97,7 +97,7 @@ async function ProductTable({ searchParams }: { searchParams: PageProps<"/admin/
                   </td>
                   <td className="px-4 py-3">
                     {known.length < stocks.length ? (
-                      <span className="text-muted">Unconfirmed</span>
+                      <span className="text-muted">Not set</span>
                     ) : known.some((stock) => stock <= LOW_STOCK) ? (
                       <span className="text-gold-deep">{known.reduce((a, b) => a + b, 0)} · low</span>
                     ) : (

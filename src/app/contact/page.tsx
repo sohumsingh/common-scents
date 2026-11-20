@@ -67,14 +67,6 @@ export default function ContactPage() {
                   </div>
 
                   <div>
-                    <dt className="text-[11px] uppercase tracking-[0.16em] text-muted">Phone</dt>
-                    <dd className="mt-1.5">
-                      <p className="text-[14px] text-charcoal">{contact.phone}</p>
-                      <p className="mt-1 text-[11px] text-muted">Placeholder — to be confirmed</p>
-                    </dd>
-                  </div>
-
-                  <div>
                     <dt className="text-[11px] uppercase tracking-[0.16em] text-muted">Hours</dt>
                     <dd className="mt-1.5 text-[14px] text-charcoal">{contact.hours}</dd>
                     <p className="mt-1 text-[11px] text-muted">{contact.responseTime}</p>

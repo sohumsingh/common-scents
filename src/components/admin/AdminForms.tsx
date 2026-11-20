@@ -86,7 +86,7 @@ export function StockForm({ rows }: { rows: StockRow[] }) {
                       name={`stock:${ref}`}
                       inputMode="numeric"
                       defaultValue={row.stock ?? ""}
-                      placeholder="Unconfirmed"
+                      placeholder="Not set"
                       aria-label={`Stock of ${row.productName} ${row.size}`}
                       className={`${adminInput} ${low ? "border-gold/70 bg-gold/8" : ""}`}
                     />

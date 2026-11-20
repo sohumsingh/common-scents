@@ -4,10 +4,8 @@ import { PageHeader } from "@/components/layout/PageHeader";
 import { InfoNote } from "@/components/ui/InfoNote";
 
 /**
- * Shared layout for the customer information pages. These documents are
- * working drafts — the brief lists the final delivery, returns, payment and
- * contact policies as outstanding decisions, so every page says so rather
- * than presenting provisional policy as settled.
+ * Shared layout for the customer information pages (delivery, returns,
+ * privacy, terms): a header, the document, and a help note alongside.
  */
 export function InfoPage({
   eyebrow = "Customer Care",
