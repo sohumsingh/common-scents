@@ -2,253 +2,133 @@
 
 **Every Moment. Every Scent.**
 
-A premium e-commerce storefront for Common Scents, a South African online fragrance retailer
-built around occasion-based fragrance discovery.
+An online fragrance store for South Africa, built around a simple idea: people find it easier to choose a scent for a *moment* — a date, the office, the gym — than from a wall of brands.
 
-The store is organised the way people actually shop for fragrance — by the moment you are
-dressing for — rather than by gender or brand. Gender remains available as a secondary filter.
+**🌐 Live site: [commonscents.vercel.app](https://commonscents.vercel.app)**
 
----
+> **Portfolio project.** Everything works end to end — accounts, stock, checkout, orders and an admin dashboard — but payments are simulated, so no money is ever taken and nothing is shipped. Products and prices are for demonstration only.
 
-## Stack
-
-| Layer      | Choice                                        |
-| ---------- | --------------------------------------------- |
-| Framework  | Next.js 16 (App Router, Turbopack)            |
-| Language   | TypeScript (strict)                           |
-| Styling    | Tailwind CSS v4 (CSS-first `@theme`)          |
-| Fonts      | `next/font` — Cormorant Garamond, Jost, Allura |
-| Data       | Typed seed catalogue behind a service layer   |
-| Deployment | Vercel-ready                                  |
-
-Planned, not yet connected: PostgreSQL (Prisma/Drizzle), Cloudinary, PayFast / Peach Payments,
-customer accounts, order management.
+![Common Scents home page](docs/screenshots/home.png)
 
 ---
 
-## Getting started
+## ✨ What it does
 
-```bash
-npm install
-npm run dev      # http://localhost:3000
-npm run build    # production build
-npm run start    # serve the production build
-npm run lint     # eslint
-```
+### For shoppers
+- **Shop by occasion.** Five collections — Daily Wear, Date Night, Special Occasion, Gym & Active and Office Wear — sit at the centre of the store. Gender and brand are secondary filters.
+- **Filter, sort and search.** Filter by occasion, gender, brand and price; sort by featured, newest or price; search by name, brand, note or occasion from anywhere on the site.
+- **Signature scent finder.** Four quick questions (the moment, the character, the intensity and the budget) match you to fragrances from the live catalogue.
+- **Detailed product pages.** Sizes and prices, notes, character, a wear guide (seasons, day or night, longevity) and "also for this occasion" comparisons.
+- **Real stock.** Sold-out sizes can't be bought, quantities stop at what's in stock, and low stock shows "Only 2 left".
+- **A bag that just works.** Anyone can fill it without an account; it's re-checked against live prices and stock every visit.
+- **Accounts.** Register, confirm your email, sign in, reset a forgotten password, and manage your name and newsletter preference.
+- **Demo checkout.** Delivery details, three delivery options (standard, express or collection — standard is free over R1 500) and a simulated card or Instant EFT payment.
+- **Order tracking.** A confirmation page, then each order's progress — Paid → Being prepared → On its way → Delivered — from your account.
+- **Contact form.** Enquiries are saved for the team to answer, with spam protection.
 
-No environment variables are required to run the site. See `.env.example` for the values that
-will be needed once the backend integrations are live.
+### For the shop owner (admin dashboard)
+- **Overview** — orders to send, demo sales, stock warnings, recent activity.
+- **Orders** — move orders along or cancel them (cancelling puts the stock back).
+- **Messages** — read and answer contact-form enquiries.
+- **Products** — add, edit, hide or delete fragrances, including photo upload.
+- **Stock & prices** — update every size in one place.
+- **Brands** and **Customers** — manage brands and give or remove admin access.
+
+Every change in the admin appears on the live shop straight away.
 
 ---
 
-## Project structure
+## 📸 Screenshots
+
+| Shop | Product page |
+|---|---|
+| ![All fragrances with filters](docs/screenshots/shop.png) | ![Dior Sauvage product page](docs/screenshots/product.png) |
+| **Collection** | **About** |
+| ![Date Night collection](docs/screenshots/collection.png) | ![About page](docs/screenshots/about.png) |
+| **Checkout (demo payment)** | **Admin: orders** |
+| ![Checkout with the demo card](docs/screenshots/checkout.png) | ![Admin orders list](docs/screenshots/admin-orders.png) |
+| **Admin: product editor** | |
+| ![Admin product editor](docs/screenshots/admin-product.png) | |
+
+---
+
+## 💻 Built with
+
+| | |
+|---|---|
+| **Framework** | [Next.js 16](https://nextjs.org) (App Router, Cache Components, Server Actions) with React 19 |
+| **Language** | TypeScript (strict) |
+| **Styling** | Tailwind CSS 4, with scroll-driven CSS animations |
+| **Database & auth** | [Supabase](https://supabase.com) — PostgreSQL, Auth, Storage and row-level security |
+| **Hosting** | [Vercel](https://vercel.com) — deploys automatically from `main`, server in London next to the database |
+| **Email** | Supabase Auth over [Brevo](https://www.brevo.com) SMTP, with custom branded templates |
+
+---
+
+## 🛠️ How it works
+
+**One source of truth.** Products, brands, stock, accounts, orders and enquiries all live in Postgres. Pages read the catalogue through a small service layer that caches it and refreshes the moment an admin saves a change.
+
+**Security in the database, not just the UI.** Row-level security decides who can see what: customers see only their own orders, and only admins can read enquiries or edit the catalogue. The admin pages check access too, but the database is the final wall.
+
+**A checkout that can't be cheated.** The browser only sends *which* sizes and *how many*. A single database function (`place_order`) then:
+- looks up the real prices — never trusting the browser's;
+- locks each size while it checks stock, so two people can't buy the last bottle at once;
+- works out delivery, saves the order with a copy of what was bought, and takes the stock off.
+
+**Spam-resistant contact form.** Enquiries go through a database function that re-checks the input and allows at most three messages per address in ten minutes.
+
+**Always on.** A daily Vercel cron job makes one tiny database read, so Supabase's free tier never pauses the project for inactivity.
+
+---
+
+## 📁 Project structure
 
 ```
 src/
-├── app/                        # Routes (App Router)
-│   ├── page.tsx                # Home
-│   ├── shop/
-│   │   ├── page.tsx            # Shop All — full catalogue with filters
-│   │   └── [slug]/page.tsx     # Product detail
-│   ├── collections/[slug]/     # The five occasion collections
-│   ├── about/  contact/  search/
-│   ├── info/                   # delivery · returns · privacy · terms
-│   ├── api/contact/route.ts    # Validated enquiry endpoint
-│   ├── globals.css             # Design system
-│   ├── fonts.ts                # Brand typography
-│   ├── layout.tsx              # Shell: header, footer, cart
-│   ├── robots.ts  sitemap.ts  icon.svg
-│   └── not-found.tsx  error.tsx
-│
-├── components/
-│   ├── brand/       Logo (signature wordmark)
-│   ├── layout/      Header, mobile nav, footer, page header, breadcrumbs
-│   ├── home/        Hero, occasion showcase, featured, trending, finder, about, newsletter
-│   ├── catalogue/   Product card, catalogue controls (filters, sort, chips)
-│   ├── product/     Bottle artwork, gallery, purchase panel
-│   ├── cart/        Cart provider, drawer, buttons
-│   ├── search/      Search overlay
-│   ├── contact/     Contact form
-│   ├── info/        Customer information page layout
-│   └── ui/          Container, Button, Badge, SectionHeading, InfoNote, Portal
-│
-└── lib/
-    ├── types.ts                 # Domain types
-    ├── site.ts                  # Brand config, navigation, contact placeholders, feature flags
-    ├── logo.ts  format.ts  current-year.ts
-    └── catalogue/
-        ├── products.ts          # ← THE SEED CATALOGUE (edit here)
-        ├── occasions.ts         # The five collections
-        ├── brands.ts            # Brand registry
-        ├── service.ts           # Data access layer (swap for a DB here)
-        └── query.ts             # Filtering, sorting, faceting (pure functions)
+  app/            Pages and routes (shop, collections, account, checkout, admin, api)
+  components/     UI, grouped by area (home, catalogue, product, cart, checkout, admin…)
+  lib/            Catalogue service, checkout rules, orders, Supabase clients, site config
+  proxy.ts        Runs before every request: session refresh, sign-in redirects, real 404s
+supabase/
+  migrations/     The full database schema, functions and security rules, in order
+  templates/      Branded sign-up and password-reset emails
+  seed.sql        The starting catalogue (generated: npm run db:seed:build)
+emails/           The new-arrivals newsletter design
+docs/             Screenshots and user-journey notes
 ```
 
 ---
 
-## Managing the catalogue
+## 🚀 Running it locally
 
-**`src/lib/catalogue/products.ts` is the single source of truth.** Add, edit or remove a product
-there and every page, filter, collection and search index updates automatically. No component
-imports the raw array — they all go through `src/lib/catalogue/service.ts`.
+**You'll need:** Node.js 20+ and a free Supabase project.
 
-A product looks like this:
+1. **Install**
+   ```bash
+   npm install
+   ```
+2. **Set up the database.** In your Supabase project's SQL editor, run each file in `supabase/migrations/` in order, then `supabase/seed.sql` to load the catalogue.
+3. **Add your keys.** Copy `.env.example` to `.env.local` and fill in your project's URL and publishable key (Supabase → Project Settings → API).
+4. **Run**
+   ```bash
+   npm run dev      # http://localhost:3000
+   ```
+5. **Make yourself an admin.** Register on the site, then in the SQL editor:
+   ```sql
+   update public.profiles set role = 'admin' where email = 'you@example.com';
+   ```
 
-```ts
-{
-  id: "dior-sauvage-edp",
-  slug: "dior-sauvage-eau-de-parfum",   // used in the URL
-  brand: "Dior",
-  brandSlug: "dior",
-  name: "Sauvage",
-  fullName: "Sauvage Eau de Parfum",
-  concentration: "Eau de Parfum",
-  gender: "men",
-  occasions: ["daily-wear", "office-wear"],   // a fragrance can sit in several
-  priceZAR: 1899,
-  variants: [
-    { id: "50ml",  label: "50 ml Eau de Parfum",  size: "50 ml",  priceZAR: 1099 },
-    { id: "100ml", label: "100 ml Eau de Parfum", size: "100 ml", priceZAR: 1899 },
-  ],
-  shortDescription: "…",              // shown on cards
-  description: "…",                   // shown on the product page
-  character: ["Aromatic", "Fresh", "Confident"],
-  notes: { top: [...], heart: [...], base: [...] },
-  notesStatus: "pending-verification",
-  pricingStatus: "indicative",
-  stockStatus: "pending-verification",
-  addedAt: "2026-10-28",               // drives "newest arrivals"
-  visual: { accent: "#5F7E99", glass: "#8FA9BF", wash: "#E2E8EC", shape: "flacon", cap: "square" },
-  image: undefined,                   // set this when Cloudinary photography is ready
-}
-```
-
-### Moving to PostgreSQL
-
-`src/lib/catalogue/service.ts` is deliberately the only module that reads the seed data, and its
-functions are already `async`. To move to a database, replace the bodies of `listProducts`,
-`getProductBySlug`, `getProductsByOccasion`, `getRelatedProducts` and `getSearchIndex` with
-Prisma/Drizzle queries. No page or component needs to change.
+Other scripts: `npm run build`, `npm run start`, `npm run lint`.
 
 ---
 
-## Design system
+## 📝 Notes
 
-Defined once in `src/app/globals.css` via Tailwind v4's `@theme`.
-
-| Token              | Value     | Use                          |
-| ------------------ | --------- | ---------------------------- |
-| `ivory`            | `#F4F0E8` | Primary background           |
-| `paper`            | `#FBF9F4` | Raised surfaces, cards       |
-| `charcoal`         | `#292725` | Text, primary buttons        |
-| `beige`            | `#D8CBB8` | Secondary surfaces           |
-| `gold` / `gold-deep` | `#B8A17B` | Accents, rules, highlights  |
-| `font-display`     | Cormorant Garamond | Headings            |
-| `font-sans`        | Jost      | Body, navigation, UI         |
-| `font-signature`   | Allura    | Logo wordmark                |
-
-### Logo
-
-The final logo is a signature-style wordmark. Until the vector artwork is supplied, the site uses
-a temporary text-based logo (the brand name in a script typeface with a hairline flourish).
-
-To swap it in: drop the file at `public/brand/common-scents-signature.svg`, set `asset` in
-`src/lib/logo.ts`, and nothing else changes — every usage goes through `components/brand/Logo.tsx`.
-
-### Product imagery
-
-There is no photography yet. Each fragrance is represented by a generated bottle illustration
-(`components/product/ProductVisual.tsx`) that reflects the fragrance's glass tint, liquid colour
-and silhouette. When a real image is attached to a product, `ProductImage` uses it automatically
-and the artwork steps aside.
+- **Demo only:** checkout simulates payment and nothing is delivered. Order numbers, delivery fees and stock all behave like a real shop.
+- **Product images** are used for demonstration and remain the property of their brands. Common Scents is not affiliated with any fragrance house.
+- **Fragrance notes** come from publicly available brand material; the wear guide is an editorial estimate.
 
 ---
 
-## What is real and what is placeholder
-
-This is a pre-launch build. The interface is explicit about the difference rather than filling
-gaps with invented information.
-
-**Placeholder, and labelled as such in the UI:**
-
-- Prices — shown with an "Indicative price" tag; no supplier pricing has been confirmed.
-- Stock — every product shows an availability notice rather than a stock count.
-- Notes — published from well-known public brand literature, flagged as awaiting confirmation
-  against supplier documentation.
-- Contact details, phone number, support hours and social handles — marked "Placeholder".
-- Delivery, returns, privacy and terms — clearly labelled working drafts.
-
-**Not present at all, by design:**
-
-- Customer reviews, ratings, sales figures, bestseller rankings or popularity data. The
-  "Trending Now" section is presented as a curated selection, and the popularity sort option is
-  present but disabled with an explanation.
-- Any claim of supplier relationships or product authentication.
-- Any claim that checkout or payments work. The checkout button explains that no payment provider
-  is connected.
-
-### Feature flags
-
-`src/lib/site.ts` holds a `features` object that documents each integration point:
-
-```ts
-features = {
-  checkout: false,        // no payment provider connected
-  accounts: false,        // customer accounts not implemented
-  newsletter: false,      // no email provider connected
-  contactDelivery: false, // enquiries validate but are not emailed
-  aiDiscovery: false,     // the signature finder is rules-based, not AI
-}
-```
-
----
-
-## Features
-
-**Live**
-
-- Occasion-led navigation and five collection pages
-- Full catalogue with faceted filtering (occasion, gender, brand, price), sorting and search
-- Product detail pages with size selection, quantity, notes, related products
-- Shopping bag with persistence, quantity controls, subtotal
-- Quick search overlay and a search results page
-- Signature scent finder — a transparent, rules-based matcher over the real catalogue
-- Contact form with client and server validation
-- Customer information pages, 404, error boundary
-- SEO: metadata, canonicals, Open Graph, JSON-LD (Organisation + Product), sitemap, robots
-- Responsive from 320px up, keyboard accessible, skip link, focus styles
-
-**Planned**
-
-- PostgreSQL catalogue, Cloudinary imagery
-- PayFast / Peach Payments checkout, order management, confirmation emails
-- Customer accounts, order history, wishlist, discount codes, reviews
-- AI-assisted fragrance finder and natural-language search
-
----
-
-## Notes on the AI-assisted discovery section
-
-The brief anticipates an AI fragrance finder. Rather than simulate one, the "Discover Your
-Signature Scent" section ships as a working **rules-based** matcher: it scores the real catalogue
-against the customer's stated occasion, character and intensity, and returns genuine matches.
-The interface states plainly that AI personalisation is planned and not yet active. When a real
-AI service is connected, `SignatureFinder` is the component to swap — the catalogue projection it
-receives (`FinderEntry`) already contains everything a model would need.
-
----
-
-## Deployment
-
-Ready for Vercel: no environment variables are needed to build or run.
-
-```bash
-vercel
-```
-
-For the future backend, copy `.env.example` to `.env.local` and fill in the values as each
-integration is configured.
-
----
-
-© Common Scents. Every Moment. Every Scent.
+Designed and built by **Sohum Singh**.
