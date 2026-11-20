@@ -1,7 +1,7 @@
 /**
  * Logo assets.
  *
- * Generated from the supplied artwork (`Common Scents Calligraphy Logo.png`
+ * Generated from the supplied artwork (`material/Common Scents Calligraphy Logo.png`
  * in the project root, which is never modified) by removing the paper
  * background. The monogram is the logo's own "C" and "S" strokes, kept in the
  * positions the calligrapher drew them.

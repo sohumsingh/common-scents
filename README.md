@@ -96,6 +96,8 @@ supabase/
   seed.sql        The starting catalogue (generated: npm run db:seed:build)
 emails/           The new-arrivals newsletter design
 docs/             Screenshots and user-journey notes
+material/         Source material, kept apart from the code: the original project brief,
+                  the build prompt and the calligraphy logo artwork
 ```
 
 ---
@@ -123,10 +125,27 @@ Other scripts: `npm run build`, `npm run start`, `npm run lint`.
 
 ---
 
+## 🤝 Services and credits
+
+Everything the site relies on outside its own code:
+
+| Service | What it's used for |
+|---|---|
+| **[Supabase](https://supabase.com)** | PostgreSQL database, user accounts and sign-in (Auth), product photo storage (Storage) and the security rules (row-level security). Used through the [`@supabase/ssr`](https://www.npmjs.com/package/@supabase/ssr) and [`@supabase/supabase-js`](https://www.npmjs.com/package/@supabase/supabase-js) libraries. |
+| **[Vercel](https://vercel.com)** | Hosting, automatic deploys from GitHub, the `commonscents.vercel.app` address, and Vercel Cron for the daily keep-alive job. |
+| **[GitHub](https://github.com)** | Source code; every push to `main` triggers a new deploy. |
+| **[Brevo](https://www.brevo.com)** | Sends the sign-up confirmation and password-reset emails (SMTP, connected through Supabase Auth). |
+| **[Google Fonts](https://fonts.google.com)** | The typefaces — Cormorant Garamond (headings) and Jost (body text) — self-hosted through `next/font`. |
+| **[Fragrantica](https://www.fragrantica.com)** | Source of the product bottle photos, used for demonstration only. |
+
+There is no payment provider, analytics, tracking or advertising — checkout is a self-contained demo.
+
+---
+
 ## 📝 Notes
 
 - **Demo only:** checkout simulates payment and nothing is delivered. Order numbers, delivery fees and stock all behave like a real shop.
-- **Product images** are used for demonstration and remain the property of their brands. Common Scents is not affiliated with any fragrance house.
+- **Product images** (sourced from Fragrantica) are used for demonstration and remain the property of their brands. Common Scents is not affiliated with any fragrance house.
 - **Fragrance notes** come from publicly available brand material; the wear guide is an editorial estimate.
 
 ---
